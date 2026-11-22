@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Inscription - Uni Sphère</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}body{background:#000;display:flex;justify-content:center;min-height:100vh}.phone{width:100%;max-width:430px;min-height:100vh;background:#0a0a0a;color:#fff;display:flex;flex-direction:column}.top{padding:20px;display:flex;align-items:center;gap:12px}.back{width:38px;height:38px;border:1px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:#fff;font-size:16px}.logo{margin:10px 20px 0;display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}.logo-mark{width:32px;height:32px;background:#7CFC00;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900}.content{padding:28px 20px;flex:1}.content h1{font-size:28px;font-weight:900;line-height:1.1}.content p{font-size:13px;color:#aaa;margin-top:8px}.step{font-size:11px;font-weight:800;color:#7CFC00;letter-spacing:1px;margin-bottom:12px}label{font-size:13px;font-weight:700;display:block;margin:22px 0 8px}input,select{background:#151515;border:1px solid #2a2a2a;border-radius:14px;padding:16px;color:#fff;font-size:16px;outline:none;width:100%}input:focus,select:focus{border-color:#7CFC00}.btn-main{width:100%;background:#7CFC00;color:#000;border:none;padding:16px;border-radius:999px;font-weight:800;font-size:15px;cursor:pointer;margin-top:20px}.error{color:#ff3b30;font-size:13px;margin-top:10px;display:none}.ok{color:#7CFC00;font-size:13px;margin-top:10px;display:none}.info{font-size:12px;color:#888;margin-top:12px;text-align:center}.hidden{display:none}.code-box input{text-align:center;font-size:22px;font-weight:900;letter-spacing:8px}.resend{text-align:center;color:#7CFC00;font-size:13px;font-weight:700;margin-top:16px;cursor:pointer}.demo-code{background:#1a2a00;border:1px dashed #7CFC00;padding:12px;border-radius:12px;text-align:center;margin-top:15px;font-size:14px}.link{color:#7CFC00;text-decoration:none;font-weight:700}
+.programme-box{background:#1a2a00;border:1px solid #2a4a00;border-radius:14px;padding:12px;margin-top:4px}
+.programme-box small{color:#aaa;font-size:11px;display:block;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="top"><button class="back" onclick="window.location.href='index.html'">&lt;</button><span style="font-size:13px;color:#aaa">Retour</span></div>
+<div class="logo"><div class="logo-mark">U</div> Uni Sphère</div>
+<div class="content" id="screenForm"><div class="step">CREER UN COMPTE</div><h1>Crée ton compte<br>avec ton mail</h1><p>On va te donner un code à 6 chiffres pour vérifier ton mail.</p>
+<label>Nom Prénom</label><input type="text" id="nomInput" placeholder="Ex : Jean Kanza">
+<label>Mail</label><input type="email" id="emailInput" placeholder="Ex : jean@gmail.com">
+<label>Mot de passe</label><input type="password" id="passwordInput" placeholder="Au moins 6 caractères">
+<label>Ton programme / établissement</label>
+<div class="programme-box">
+<select id="programmeInput">
+  <option value="">Chargement des programmes...</option>
+</select>
+<small>Tu ne verras que les cours de ton programme. Tu pourras le changer plus tard dans ton profil.</small>
+</div>
+<div class="error" id="errorMsg"></div><button class="btn-main" id="btnAction">Envoyer le code</button><div class="info">Déjà un compte ? <a class="link" href="connexion.html">Connecte-toi</a><br><br>En continuant, tu acceptes nos <b>Conditions</b>.</div></div>
+<div class="content hidden" id="screenCode"><div class="step">VÉRIFICATION</div><h1>Entre le code<br>à 6 chiffres</h1><p>Code envoyé à <b id="emailShow" style="color:#fff"></b></p><p style="margin-top:6px">Programme : <b id="programmeShow" style="color:#7CFC00"></b></p><div class="demo-code">Ton code de test : <b id="codeShow"></b><br><span style="font-size:11px;color:#aaa">En vrai, ce code partira par mail / SMS. Pour l'instant il s'affiche ici pour tester sans bloquer.</span></div><div class="code-box"><input id="codeInput" maxlength="6" inputmode="numeric" placeholder="------"></div><div class="error" id="errorCode"></div><div class="ok" id="okCode">✅ Bon code ! Création...</div><button class="btn-main" id="btnVerify">Vérifier et créer mon compte</button><div class="resend" id="btnResend">Renvoyer le code</div><div class="resend" style="color:#aaa" onclick="backToForm()">← Changer de mail</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="3-inscription-etudiant.js"></script>
+</body>
+</html>

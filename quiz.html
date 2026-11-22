@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Quiz - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('espacetravaille.html')">←</button><h1 class="titre-page" style="flex:1;text-align:center" id="titreQuiz">Quiz</h1><span style="width:38px"></span></div>
+<div id="quizIntro" style="padding:20px;text-align:center"><h2 id="quizTitreIntro" style="font-size:22px"></h2><p id="quizInfoIntro" style="color:#aaa;font-size:13px;margin:10px 0"></p><div id="timerBox" style="font-size:28px;font-weight:900;color:#7CFC00;margin:10px 0">--:--</div><button class="btn-qcm" onclick="demarrerQuiz()">Commencer</button></div>
+<div id="quizPlay" style="display:none;padding:0 16px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#aaa;padding:10px 0"><span id="quizProgress">Question 1 / 10</span><span id="quizTimer" style="color:#7CFC00;font-weight:800">--:--</span></div><div style="background:#151515;border:1px solid #2a2a2a;border-radius:18px;padding:18px"><h3 id="questionText" style="font-size:17px;line-height:1.4"></h3><div id="propositions" style="display:flex;flex-direction:column;gap:10px;margin-top:16px"></div></div><button class="btn-qcm" id="btnSuivant" onclick="questionSuivante()" style="display:none">Suivant</button></div>
+<div id="quizResult" style="display:none;padding:20px;text-align:center"><h2 style="font-size:28px">Resultat</h2><div style="font-size:48px;font-weight:900;color:#7CFC00;margin:14px 0" id="scoreFinal">--</div><p id="etoilesFinal" style="font-size:14px"></p><button class="btn-qcm" onclick="go('espacetravaille.html')">Retour a l'espace de travail</button><button class="btn-qcm" style="background:#222;color:#fff" onclick="go('profile.html')">Voir mon profil</button></div>
+<div id="toast" class="toast"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="14-quiz.js"></script>
+</body>
+</html>

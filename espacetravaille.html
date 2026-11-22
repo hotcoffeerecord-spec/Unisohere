@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Espace de travail - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('acceuil.html')">←</button><h1 class="titre-page" style="flex:1;text-align:center">Espace de travail</h1><span style="width:38px"></span></div>
+<div class="page-title"><h1>Mon <span>espace</span></h1><p>Mes Cours, Fiches et Fascicules.</p></div>
+
+<div class="tabs"><button class="tab-btn actif" onclick="changerTab('cours',this)">Mes Cours</button><button class="tab-btn" onclick="changerTab('fiches',this)">Fiches</button><button class="tab-btn" onclick="changerTab('fascicules',this)">Fascicules</button></div>
+
+<div class="section actif" id="tab-cours"><div class="courses" id="listeMesCours"></div></div>
+<div class="section" id="tab-fiches"><div class="courses" id="listeFiches"></div></div>
+<div class="section" id="tab-fascicules"><div class="courses" id="listeFascicules"></div></div>
+<div id="toast" class="toast"></div>
+</div>
+
+<!-- MODAL PAIEMENT - MEME STYLE QUE ACCUEIL, SANS BOULES -->
+<div class="search-overlay" id="modalPaiement">
+  <div class="paiement-box">
+    <div class="paiement-head">
+      <span class="paiement-icone">📚</span>
+      <h3 id="paiementTitre">Fascicule</h3>
+      <p class="paiement-prix" id="paiementPrix">0 FCFA</p>
+      <p class="paiement-sous">Paiement sécurisé par Mobile Money</p>
+    </div>
+    <label class="label-paiement">Ton numéro Mobile Money</label>
+    <div class="numero-paiement-wrap" id="wrapNumero">
+      <span class="prefix-paiement">+242</span>
+      <input id="inputNumeroPaiement" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel" autocapitalize="off" spellcheck="false" maxlength="9" placeholder="061234567" oninput="onInputNumeroPaiement(this)">
+    </div>
+    <div class="ligne-numero">
+      <span id="msgNumero" class="msg-numero">9 chiffres, commence par 06, 05 ou 04</span>
+      <span id="compteurNumero" class="compteur-numero">0/9</span>
+    </div>
+    <div class="operateur-detecte" id="operateurDetecte">
+      <span id="operateurIcone">📱</span>
+      <span id="operateurTexte">Tape ton numéro, l'opérateur sera détecté</span>
+    </div>
+    <p class="hint-paiement">06 → MTN MoMo &nbsp;•&nbsp; 05 / 04 → Airtel Money<br>Tu recevras une demande de confirmation sur ton téléphone.</p>
+    <button class="btn-payer-fasc" id="btnPayerFasc" onclick="payerFascicule()" disabled>Payer maintenant →</button>
+    <button class="btn-annuler-paiement" onclick="fermerPaiement()">Annuler</button>
+  </div>
+</div>
+
+<div class="bottom-nav"><a onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a class="active" onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="8-espacetravail.js"></script>
+</body>
+</html>

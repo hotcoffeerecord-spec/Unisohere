@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Assistant - Unisphere</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone phone-assistant">
+<div class="header header-assistant"><button class="btn-retour" onclick="go('acceuil.html')">←</button><div class="assistant-top"><div class="logo-mark">U</div><div class="assistant-nom"><b>Assistant Unisphere</b><span><i class="dot-vert"></i> En ligne</span></div></div></div>
+
+<!-- SI PAS PREMIUM : ON MONTRE ÇA -->
+<div class="premium-lock" id="premiumLock">
+  <div class="crown">👑</div>
+  <h2>Assistant réservé<br><span>aux Premium</span></h2>
+  <p>Pose toutes tes questions, révise avec l'IA, comprends tes cours en 2 minutes.</p>
+  <div class="avantages">
+    <div class="av"><b>✓</b> Questions illimitées avec l'IA</div>
+    <div class="av"><b>✓</b> Tous les cours Premium débloqués</div>
+    <div class="av"><b>✓</b> Fiches + Quiz + Vrai-Faux</div>
+  </div>
+  <button class="btn-premium-go" onclick="go('abonnementpremium.html')">Passer en Premium 👑</button>
+  <p style="font-size:12px">À partir de 1000 FCFA / mois</p>
+</div>
+
+<!-- SI PREMIUM : ON MONTRE ÇA -->
+<div id="zoneAssistant" style="display:flex;flex-direction:column;flex:1;min-height:0">
+<div class="chips" id="chips"><button class="chip" onclick="envoyerSuggestion('Photosynthese')">Photosynthese</button><button class="chip" onclick="envoyerSuggestion('Fonction maths')">Fonction maths</button><button class="chip" onclick="envoyerSuggestion('Colonisation')">Colonisation</button><button class="chip" onclick="envoyerSuggestion('Exercice')">Exercice</button></div>
+<div class="chat" id="chat"><div class="msg msg-bot">Salut ! Je suis ton Assistant Unisphere. Pose-moi une question.</div></div>
+</div>
+
+<div class="saisie" id="saisie"><input type="text" id="inputQuestion" placeholder="Pose ta question..." onkeydown="if(event.key==='Enter') envoyerQuestion()"><button class="btn-envoyer" onclick="envoyerQuestion()">Envoyer</button></div>
+</div>
+<div class="bottom-nav"><a onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a class="active" onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="11-assistant.js"></script>
+</body>
+</html>

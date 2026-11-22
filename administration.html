@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Espace Enseignant - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+<div class="header-card"><span class="badge">ENSEIGNANT</span><h1>Bonjour, <span id="nomProf">Enseignant</span></h1><p id="statutProf">Chargement...</p><p style="margin-top:8px;font-size:13px">Programme : <b id="programmeFixeHeader" style="color:#7CFC00">-</b> <span style="color:#888">(figé depuis ton inscription)</span></p><button class="btn-logout" onclick="deconnecter()" style="margin-top:12px">Deconnexion</button></div>
+<div class="stats"><div class="stat"><b id="nbCours">0</b><span>Cours</span></div><div class="stat"><b id="nbQuiz">0</b><span>Quiz</span></div><div class="stat"><b id="nbVues">0</b><span>Lectures totales</span></div><div class="stat"><b id="nbVuesPayantes">0</b><span>Lectures payantes</span></div><div class="stat stat-gain"><b id="gainTotal">0 FCFA</b><span>Gains</span></div></div>
+<div class="alerte"><b>Regle des 5 matieres</b><p>Tu dois avoir au moins 5 matieres pour publier. Si ta communaute est bloquee, ajoute des matieres.</p></div>
+<div class="tabs">
+  <button class="tab active" onclick="changerTabProf('cours',this)">Mes Cours</button>
+  <button class="tab" onclick="changerTabProf('quiz',this)">Mes Quiz</button>
+  <button class="tab" onclick="changerTabProf('vf',this)">Vrai / Faux</button>
+  <button class="tab" onclick="changerTabProf('fiche',this)">Fiches</button>
+  <button class="tab" onclick="changerTabProf('fascicule',this)">Fascicules</button>
+</div>
+<div id="tab-cours-prof"><div id="listeMesCours"></div><button class="btn" onclick="ouvrirModal('modal-cours')">+ Publier un cours</button></div>
+<div id="tab-quiz-prof" style="display:none"><div id="listeMesQuiz"></div><button class="btn" onclick="ouvrirModal('modal-quiz')">+ Publier un Quiz</button></div>
+<div id="tab-vf-prof" style="display:none"><div id="listeMesVF"></div><button class="btn" onclick="ouvrirModal('modal-vf')">+ Publier Vrai / Faux</button></div>
+<div id="tab-fiche-prof" style="display:none"><div id="listeMesFiches"></div><button class="btn" onclick="ouvrirModal('modal-fiche')">+ Publier une Fiche</button></div>
+<div id="tab-fascicule-prof" style="display:none"><div id="listeMesFascicules"></div><button class="btn" onclick="ouvrirModal('modal-fascicule')">+ Publier un Fascicule</button></div>
+<div id="msgProf"></div>
+<div id="toast" class="toast"></div>
+</div>
+<div class="barre-ajouter"><div class="barre-ajouter-inner">
+  <button class="btn-ajouter-cours" onclick="ouvrirModal('modal-cours')">+ Cours</button>
+  <button class="btn-ajouter-quiz" onclick="ouvrirModal('modal-quiz')">+ Quiz</button>
+  <button class="btn-ajouter-cours" onclick="ouvrirModal('modal-vf')">+ Vrai/Faux</button>
+  <button class="btn-ajouter-cours" onclick="ouvrirModal('modal-fiche')">+ Fiche</button>
+  <button class="btn-ajouter-quiz" onclick="ouvrirModal('modal-fascicule')">+ Fascicule</button>
+</div></div>
+
+<!-- MODAL COURS -->
+<div id="modal-cours" class="modal hidden"><div class="modal-box">
+  <h3>Nouveau Cours</h3>
+  <div class="programme-fixe">Programme : <b id="prog-cours">-</b> <span>Figé depuis ton inscription</span></div>
+  <label>Titre *</label><input id="cours-titre" placeholder="Ex : Semiologie - L'examen clinique">
+  <label>Matiere *</label><select id="cours-matiere"><option value="">-- Choisis la matière --</option></select>
+  <label>Description *</label><textarea id="cours-desc" rows="4" placeholder="De quoi parle le cours ?"></textarea>
+  <label>Importer ton PDF depuis ton appareil *</label>
+  <div class="upload-box" onclick="document.getElementById('cours-fichier').click()">
+    <span class="upload-icon">PDF</span><b id="cours-fichier-nom">Clique pour choisir ton PDF</b><small>PDF, max 20 Mo - depuis ton téléphone / ordinateur</small>
+  </div>
+  <input id="cours-fichier" type="file" accept=".pdf" style="display:none" onchange="afficherNomFichier('cours-fichier','cours-fichier-nom')">
+  <label>Visibilité *</label>
+  <div class="choix-premium">
+    <label class="choix-card"><input type="radio" name="cours-premium" value="gratuit"> <b>Gratuit</b><span>Tout le monde peut voir</span></label>
+    <label class="choix-card"><input type="radio" name="cours-premium" value="premium" checked> <b>Premium</b><span>Seulement Premium - lectures comptées en payantes</span></label>
+  </div>
+  <div id="msg-cours"></div>
+  <button class="btn" onclick="sauvegarderCours()">Publier le cours</button>
+  <button class="btn btn-ghost" onclick="fermerModal('modal-cours')">Annuler</button>
+</div></div>
+
+<!-- MODAL QUIZ -->
+<div id="modal-quiz" class="modal hidden"><div class="modal-box">
+  <h3>Nouveau Quiz</h3><p class="modal-sub">Gratuit. Min 10, max 50 questions.</p>
+  <div class="programme-fixe">Programme : <b id="prog-quiz">-</b> <span>Figé depuis ton inscription</span></div>
+  <label>Titre *</label><input id="quiz-titre" placeholder="Ex : Quiz Semiologie N°1">
+  <label>Matiere *</label><select id="quiz-matiere"><option value="">-- Choisis la matière --</option></select>
+  <label>Type *</label><select id="quiz-type"><option value="quiz">Quiz classique</option><option value="examen_blanc">Examen blanc (chrono)</option></select>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px"><b style="color:#fff;font-size:14px">Questions : <span id="compteur-quiz">10</span> / 50</b><span style="font-size:12px;color:#888">Minimum 10</span></div>
+  <div id="zone-questions-quiz"></div>
+  <button class="btn btn-ghost" onclick="ajouterQuestionQuiz()">+ Ajouter une question</button>
+  <div id="msg-quiz"></div>
+  <button class="btn" onclick="sauvegarderQuiz()">Publier le quiz</button>
+  <button class="btn btn-ghost" onclick="fermerModal('modal-quiz')">Annuler</button>
+</div></div>
+
+<!-- MODAL VRAI / FAUX -->
+<div id="modal-vf" class="modal hidden"><div class="modal-box">
+  <h3>Vrai ou Faux</h3><p class="modal-sub">Gratuit. Min 10, max 50 affirmations.</p>
+  <div class="programme-fixe">Programme : <b id="prog-vf">-</b> <span>Figé depuis ton inscription</span></div>
+  <label>Titre *</label><input id="vf-titre" placeholder="Ex : Le coeur a 4 cavites">
+  <label>Matiere *</label><select id="vf-matiere"><option value="">-- Choisis la matière --</option></select>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px"><b style="color:#fff;font-size:14px">Affirmations : <span id="compteur-vf">10</span> / 50</b><span style="font-size:12px;color:#888">Minimum 10</span></div>
+  <div id="zone-questions-vf"></div>
+  <button class="btn btn-ghost" onclick="ajouterQuestionVF()">+ Ajouter une affirmation</button>
+  <div id="msg-vf"></div>
+  <button class="btn" onclick="sauvegarderVF()">Publier Vrai / Faux</button>
+  <button class="btn btn-ghost" onclick="fermerModal('modal-vf')">Annuler</button>
+</div></div>
+
+<!-- MODAL FICHE -->
+<div id="modal-fiche" class="modal hidden"><div class="modal-box">
+  <h3>Fiche de Revision</h3>
+  <div class="programme-fixe">Programme : <b id="prog-fiche">-</b> <span>Figé depuis ton inscription</span></div>
+  <label>Titre *</label><input id="fiche-titre" placeholder="Ex : Fiche - Semiologie">
+  <label>Matiere *</label><select id="fiche-matiere"><option value="">-- Choisis la matière --</option></select>
+  <label>Points cles *</label><textarea id="fiche-contenu" rows="6" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+  <label>A retenir *</label><input id="fiche-resume" placeholder="Ex : A retenir : ...">
+  <label>Importer ton PDF (optionnel)</label>
+  <div class="upload-box" onclick="document.getElementById('fiche-fichier').click()">
+    <span class="upload-icon">PDF</span><b id="fiche-fichier-nom">Clique pour choisir ton PDF</b><small>PDF, max 20 Mo - optionnel</small>
+  </div>
+  <input id="fiche-fichier" type="file" accept=".pdf" style="display:none" onchange="afficherNomFichier('fiche-fichier','fiche-fichier-nom')">
+  <label>Visibilité *</label>
+  <div class="choix-premium">
+    <label class="choix-card"><input type="radio" name="fiche-premium" value="gratuit"> <b>Gratuit</b><span>Tout le monde peut voir</span></label>
+    <label class="choix-card"><input type="radio" name="fiche-premium" value="premium" checked> <b>Premium</b><span>Seulement Premium - lectures comptées en payantes</span></label>
+  </div>
+  <div id="msg-fiche"></div>
+  <button class="btn" onclick="sauvegarderFiche()">Publier la fiche</button>
+  <button class="btn btn-ghost" onclick="fermerModal('modal-fiche')">Annuler</button>
+</div></div>
+
+<!-- MODAL FASCICULE -->
+<div id="modal-fascicule" class="modal hidden"><div class="modal-box">
+  <h3>Nouveau Fascicule</h3><p class="modal-sub">Seul le fascicule peut avoir un prix. Ses lectures ne sont JAMAIS payantes, ce sont des ventes.</p>
+  <div class="programme-fixe">Programme : <b id="prog-fasc">-</b> <span>Figé depuis ton inscription</span></div>
+  <div class="prix-box"><b>Fascicule payant</b><p>Seul le fascicule peut avoir un prix.</p></div>
+  <label>Titre *</label><input id="fasc-titre" placeholder="Ex : Fascicule Complet Semiologie S1">
+  <label>Matiere *</label><select id="fasc-matiere"><option value="">-- Choisis la matière --</option></select>
+  <label>Description *</label><textarea id="fasc-desc" rows="4" placeholder="Chapitres, nombre de pages..."></textarea>
+  <label>Nombre de pages *</label><input id="fasc-pages" type="number" min="1" placeholder="Ex : 45">
+  <label>Importer ton PDF du fascicule *</label>
+  <div class="upload-box" onclick="document.getElementById('fasc-fichier').click()">
+    <span class="upload-icon">PDF</span><b id="fasc-fichier-nom">Clique pour choisir ton PDF</b><small>PDF, max 50 Mo - depuis ton appareil</small>
+  </div>
+  <input id="fasc-fichier" type="file" accept=".pdf" style="display:none" onchange="afficherNomFichier('fasc-fichier','fasc-fichier-nom')">
+  <label>Prix en FCFA *</label>
+  <div class="phone-wrap"><input id="fasc-prix" type="number" min="500" max="50000" placeholder="Ex : 5000" oninput="calculerGainFascicule()"><span class="prefix">FCFA</span></div>
+  <p class="hint" id="info-gain">Tu recois 80% : <b id="gain-fasc">0 FCFA</b> / vente.</p>
+  <label class="check-label"><input type="checkbox" id="fasc-gratuit" onchange="togglePrixFascicule()"> Proposer gratuitement (0 FCFA)</label>
+  <div id="msg-fasc"></div>
+  <button class="btn btn-payer" onclick="sauvegarderFascicule()">Publier le fascicule</button>
+  <button class="btn btn-ghost" onclick="fermerModal('modal-fascicule')">Annuler</button>
+</div></div>
+
+<!-- MODAL MODIFIER -->
+<div id="modal-modifier" class="modal hidden"><div class="modal-box">
+  <h3><span id="modif-titre-label">Modifier</span></h3>
+  <label>Titre *</label><input id="modif-titre" placeholder="Titre">
+  <label>Matiere *</label><select id="modif-matiere"><option value="">-- Choisis la matière --</option></select>
+  <label>Description *</label><textarea id="modif-desc" rows="5" placeholder="Description..."></textarea>
+  <div id="bloc-modif-premium" style="display:none">
+    <label>Visibilité</label>
+    <div class="choix-premium">
+      <label class="choix-card"><input type="radio" name="modif-premium" value="gratuit"> <b>Gratuit</b></label>
+      <label class="choix-card"><input type="radio" name="modif-premium" value="premium" checked> <b>Premium</b></label>
+    </div>
+  </div>
+  <button class="btn" onclick="sauvegarderModification()">Enregistrer les modifications</button>
+  <button class="btn btn-ghost" onclick="document.getElementById('modal-modifier').classList.add('hidden')">Annuler</button>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="6-protection.js"></script>
+<script src="7-enseignant.js"></script>
+</body>
+</html>

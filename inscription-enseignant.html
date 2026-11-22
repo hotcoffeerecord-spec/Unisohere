@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Creer un compte Enseignant — Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stylegroupe.css?v=3">
+</head>
+<body>
+<div class="top"><a href="index.html" class="logo"><span class="logo-mark">U</span> UNISPHERE</a><a href="index.html" class="back">Retour</a></div>
+
+<div class="card">
+<span class="badge">ENSEIGNANT - 15.000 FCFA / AN</span>
+<h1>Creer un compte <span>Enseignant.</span></h1>
+<p class="sub">Publie tes cours, quiz, fiches et fascicules.</p>
+<div class="etape"><div id="bar1" class="active"></div><div id="bar2"></div><div id="bar3"></div></div>
+
+<!-- ETAPE 1 -->
+<div id="etape1">
+  <div class="section-title">Etape 1 - Tes infos</div>
+  <label>Nom *</label><input id="nom" type="text" placeholder="Ex : Mbemba" autocomplete="off">
+  <label>Prenom *</label><input id="prenom" type="text" placeholder="Ex : Jean" autocomplete="off">
+  <label>Email *</label><input id="email" type="email" placeholder="vous@email.com" autocomplete="off">
+  <label>Mot de passe *</label><input id="password" type="password" placeholder="Minimum 6 caracteres, sans espace" autocomplete="new-password">
+  <label>Programme *</label><select id="programme_id"><option value="">-- Choisis ton programme --</option></select>
+  <label>Etablissement</label><input id="etablissement" type="text" placeholder="Ex : Universite Marien Ngouabi">
+  <div id="msg1" class="error" style="text-align:center;margin-top:10px"></div>
+  <button class="btn" onclick="allerEtape2()">Continuer vers le paiement</button>
+
+  <!-- LIEN CONNEXION - AVANT LIEN ETUDIANT -->
+  <a href="connexion.html" class="btn-secondary lien-connexion">Deja un compte ? Connecte-toi</a>
+  <a href="inscription-etudiant.html" class="btn-secondary lien-etudiant">Tu es etudiant ? Inscris-toi gratuitement</a>
+</div>
+
+<!-- ETAPE 2 -->
+<div id="etape2" class="hidden">
+  <div class="section-title">Etape 2 - Payer les frais</div>
+  <div class="prix-box"><div style="font-size:12px;font-weight:800;letter-spacing:1px">ABONNEMENT ENSEIGNANT</div><b>15.000 FCFA / an</b><p>Pour pouvoir publier. Sans abonnement, tu ne peux pas publier.<br>MODE DEMO : aucun vrai argent n'est debite.</p></div>
+  <label>Numero de paiement</label>
+  <div class="phone-wrap"><span class="prefix">+242</span><input id="numero_paiement" type="tel" inputmode="numeric" maxlength="9" placeholder="06 123 45 67" oninput="detecterOperateur()" autocomplete="off"></div>
+  <p class="hint">Mets ton numero MTN MoMo ou Airtel Money.</p>
+  <div class="operateurs">
+    <div class="op-card" id="card-MoMo" onclick="choisirOperateur('MoMo')"><b>MTN MoMo</b><span>Mobile Money</span></div>
+    <div class="op-card" id="card-Airtel" onclick="choisirOperateur('Airtel Money')"><b>Airtel Money</b><span>Mobile Money</span></div>
+  </div>
+  <select id="methode_paiement" style="display:none"><option value="MoMo">MTN MoMo</option><option value="Airtel Money">Airtel Money</option></select>
+  <div id="msg2" class="error" style="text-align:center;margin-top:10px"></div>
+  <button class="btn btn-payer" id="btnPayer" onclick="payerFrais()">Payer 15.000 FCFA</button>
+  <p class="secure">Paiement securise • MODE DEMO : aucun vrai argent debite</p>
+  <button class="btn btn-ghost" onclick="retourEtape1()">Retour</button>
+</div>
+
+<!-- ETAPE 3 -->
+<div id="etape3" class="hidden">
+  <div class="section-title">Etape 3 - Code email</div>
+  <p class="sub" style="text-align:center">On a envoye un code a <b id="emailAffiche"></b><br>MODE DEMO : le code est <b>123456</b></p>
+  <div class="code-inputs"><input maxlength="1" id="c1" inputmode="numeric"><input maxlength="1" id="c2" inputmode="numeric"><input maxlength="1" id="c3" inputmode="numeric"><input maxlength="1" id="c4" inputmode="numeric"><input maxlength="1" id="c5" inputmode="numeric"><input maxlength="1" id="c6" inputmode="numeric"></div>
+  <div id="msg3" style="text-align:center;font-size:13px;font-weight:600;margin-top:10px"></div>
+  <button class="btn" onclick="verifierCode()">Verifier le code et creer mon compte</button>
+  <button class="btn btn-ghost" onclick="renvoyerCode()">Renvoyer le code</button>
+  <p style="text-align:center;font-size:12px;color:#888;margin-top:10px">Astuce demo : tape 123456</p>
+</div>
+
+<div id="msg"></div>
+</div>
+
+<!-- ACCUEIL SEUL EN BAS -->
+<div class="barre-bas"><div class="barre-bas-inner barre-bas-seul"><a href="index.html" class="btn-accueil-seul">Accueil</a></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="4-inscription-enseignant.js?v=3"></script>
+</body>
+</html>

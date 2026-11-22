@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stylegroupe.css">
+</head>
+<body>
+<div class="wrap">
+<div class="header-card"><span class="badge badge-premium">SUPER ADMIN</span><h1>Admin <span>Unisphere</span></h1><p>Toi seul. Programmes, validations, paiements, revenus.</p><button class="btn-logout" onclick="deconnecter()" style="margin-top:12px">Deconnexion</button></div>
+<div class="stats"><div class="stat"><b id="statUsers">0</b><span>Utilisateurs</span></div><div class="stat"><b id="statProfs">0</b><span>Enseignants</span></div><div class="stat"><b id="statCours">0</b><span>Cours</span></div><div class="stat stat-gain"><b id="statRevenu">0 FCFA</b><span>Revenu plateforme</span></div></div>
+<div class="header-card" style="margin-top:14px"><h1 style="font-size:20px">Ajouter un programme</h1><div style="display:flex;gap:8px;margin-top:12px"><input id="nouveauProgramme" placeholder="Ex : Anatomie"><button class="btn" style="margin:0;width:auto;padding:14px 20px" onclick="ajouterProgramme()">Ajouter</button></div><div id="listeProgrammes" style="margin-top:14px"></div></div>
+<div class="tabs"><button class="tab active" onclick="changerTabAdmin('profs',this)">Profs en attente</button><button class="tab" onclick="changerTabAdmin('paiements',this)">Paiements</button><button class="tab" onclick="changerTabAdmin('cours',this)">Tous les cours</button><button class="tab" onclick="changerTabAdmin('users',this)">Utilisateurs</button></div>
+<div id="tab-profs-admin"><div id="listeProfsAttente"></div></div>
+<div id="tab-paiements-admin" style="display:none"><div id="listePaiements"></div></div>
+<div id="tab-cours-admin" style="display:none"><div id="listeTousCours"></div></div>
+<div id="tab-users-admin" style="display:none"><div id="listeUsers"></div></div>
+<div id="toast" class="toast"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="13-admin.js"></script>
+</body>
+</html>

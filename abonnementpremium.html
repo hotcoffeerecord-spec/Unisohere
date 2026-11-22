@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Abonnement Premium - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="top"><button class="back" onclick="go('acceuil.html')">←</button><span style="font-size:13px;color:#aaa">Retour</span></div>
+<div class="header-premium"><div class="crown-big">PREMIUM</div><h1>Passe en <span>Premium</span></h1><p>Debloque tous les cours Premium, sans limite.</p></div>
+<div class="avantages"><div class="av"><b>✓</b><span>Tous les cours Premium debloques</span></div><div class="av"><b>✓</b><span>Quiz illimites, etoiles et flammes</span></div><div class="av"><b>✓</b><span>Nouveaux cours en priorite</span></div></div>
+<div class="plans">
+<div class="plan" onclick="choisirPlan('mensuel',1000,this)"><div class="plan-top"><b>Mensuel</b><div class="prix">1.000 <small>FCFA / mois</small></div></div><p>Pour tester le Premium.</p></div>
+<div class="plan selected" onclick="choisirPlan('trimestriel',2500,this)"><span class="badge-pop">POPULAIRE</span><div class="plan-top"><b>Trimestriel</b><div class="prix">2.500 <small>FCFA / 3 mois</small></div></div><p>Le meilleur rapport qualite / prix.</p></div>
+<div class="plan" onclick="choisirPlan('annuel',7500,this)"><div class="plan-top"><b>Annuel</b><div class="prix">7.500 <small>FCFA / an</small></div></div><p>Pour toute l'annee, sans y penser.</p></div>
+</div>
+<div class="pay"><div class="pay-title">Numero de paiement</div><div class="numero-wrap"><span>+242</span><input id="numeroPaiement" type="tel" placeholder="06 123 45 67"></div><div class="numero-info" id="infoNumero">Mets ton numero MTN MoMo ou Airtel Money.</div><div class="pay-methods"><div class="pay-method selected" onclick="choisirMethode('MTN MoMo',this)">MTN MoMo<small>Mobile Money</small></div><div class="pay-method" onclick="choisirMethode('Airtel Money',this)">Airtel Money<small>Mobile Money</small></div><div class="pay-method" onclick="choisirMethode('Orange Money',this)">Orange Money<small>Mobile Money</small></div></div></div>
+<button class="btn-pay" id="btnPayerPremium" onclick="payerPremium()">Payer 2.500 FCFA</button>
+<div class="secure">Paiement securise • MODE DEMO : aucun vrai argent debite</div>
+<div class="success" id="successBox"><b>Demande envoyee !</b><p>En attente de validation par l'admin.</p><button onclick="go('notifications.html')">Voir mes notifications</button></div>
+<div id="toast" class="toast"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="12-premium.js"></script>
+</body>
+</html>

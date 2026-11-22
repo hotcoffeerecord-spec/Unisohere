@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Categories - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('acceuil.html')">←</button><h1 class="titre-page" style="flex:1;text-align:center">Categories</h1><span style="width:38px"></span></div>
+<div class="page-title"><h1>Toutes les <span>matieres</span></h1><p>Choisis une matiere pour voir ses cours et Quiz.</p></div>
+<div class="cats" id="listeCategories" style="flex-wrap:wrap;overflow:visible"></div>
+<div class="section-head"><h2 id="titreFil">Tous les cours</h2></div>
+<div class="courses" id="listeCours"></div>
+<div id="toast" class="toast"></div>
+</div>
+<div class="bottom-nav"><a onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script>ProtegerPage('etudiant');chargerAccueil();</script>
+</body>
+</html>

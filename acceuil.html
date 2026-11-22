@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Accueil - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo" onclick="go('accueil.html')"><div class="logo-mark">U</div>Unisphere</div>
+    <div class="icons">
+      <div class="icon-circle" onclick="ouvrirRecherche()">Recherche</div>
+      <div class="icon-circle notif-btn" onclick="go('notifications.html')">Notif <span class="notif-badge" id="badgeNotif" style="display:none">0</span></div>
+    </div>
+  </div>
+
+  <!-- HERO SLIDER -->
+  <div class="hero-slider" id="heroSlider">
+    <div class="hero-track" id="heroTrack">
+      <div class="hero-slide" onclick="go('examenblanc.html')">
+        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800" alt="" loading="lazy">
+        <div class="hero-text"><h1>PASSER UN<br>EXAMEN BLANC.</h1><p>Entraîne-toi en conditions réelles, comme le jour J. Chrono, vraies questions, vrai score.</p></div>
+        <button class="btn-hero">Commencer l'examen →</button>
+      </div>
+      <div class="hero-slide" onclick="go('classement.html')">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="" loading="lazy">
+        <div class="hero-text"><h1>VOIR LE<br>CLASSEMENT.</h1><p>Découvre qui révise le mieux. Grimpe dans le classement et dépasse tes amis.</p></div>
+        <button class="btn-hero">Voir mon rang →</button>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"><span class="dot-hero actif" onclick="allerSlide(0)"></span><span class="dot-hero" onclick="allerSlide(1)"></span></div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section-head"><h2>Categories</h2><a onclick="go('categorie.html')">Voir tout</a></div>
+  <div class="cats" id="listeCategories"></div>
+
+  <!-- FIL -->
+  <div class="section-head"><h2 id="titreFil">Fil d'actualité - Tout</h2><span style="font-size:12px;color:#7CFC00">Nouveau</span></div>
+
+  <div class="filters" id="filtresAccueil">
+    <button class="filter actif" onclick="choisirTypeAccueil('Tout',this)">Tout</button>
+    <button class="filter" onclick="choisirTypeAccueil('Cours',this)">Cours</button>
+    <button class="filter" onclick="choisirTypeAccueil('Fiches',this)">Fiches</button>
+    <button class="filter" onclick="choisirTypeAccueil('Fascicules',this)">Fascicules</button>
+    <button class="filter" onclick="choisirTypeAccueil('Quiz',this)">Quiz</button>
+  </div>
+
+  <div class="courses" id="listeCours"></div>
+  <div id="toast" class="toast"></div>
+</div>
+
+<!-- RECHERCHE - BOUTON ← RETOUR FIL + BOUTON ✓ VALIDER -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-top">
+    <button class="btn-retour" onclick="retourFilNormal()" title="Retour au fil normal">←</button>
+    <div class="search-input-wrap">
+      <input id="inputRecherche" placeholder="Rechercher un cours, une fiche, un fascicule..." onkeydown="if(event.key==='Enter'){validerRecherche()}">
+      <button class="btn-effacer" onclick="effacerRecherche()">×</button>
+    </div>
+    <button class="btn-valider-recherche" onclick="validerRecherche()" title="Valider la recherche">✓</button>
+  </div>
+  <div class="search-hint">Tape le nom d'un cours, d'une fiche, d'un fascicule, d'une matière... puis ✓ pour voir dans le fil</div>
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<!-- MODAL PAIEMENT - SANS BOULES, DETECTION AUTO -->
+<div class="search-overlay" id="modalPaiement">
+  <div class="paiement-box">
+    <div class="paiement-head">
+      <span class="paiement-icone">📚</span>
+      <h3 id="paiementTitre">Fascicule</h3>
+      <p class="paiement-prix" id="paiementPrix">0 FCFA</p>
+      <p class="paiement-sous">Paiement sécurisé par Mobile Money</p>
+    </div>
+
+    <label class="label-paiement">Ton numéro Mobile Money</label>
+    <div class="numero-paiement-wrap" id="wrapNumero">
+      <span class="prefix-paiement">+242</span>
+      <input id="inputNumeroPaiement" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel" autocapitalize="off" spellcheck="false" maxlength="9" placeholder="061234567" oninput="onInputNumeroPaiement(this)">
+    </div>
+    <div class="ligne-numero">
+      <span id="msgNumero" class="msg-numero">9 chiffres, commence par 06, 05 ou 04</span>
+      <span id="compteurNumero" class="compteur-numero">0/9</span>
+    </div>
+
+    <div class="operateur-detecte" id="operateurDetecte">
+      <span id="operateurIcone">📱</span>
+      <span id="operateurTexte">Tape ton numéro, l'opérateur sera détecté</span>
+    </div>
+
+    <p class="hint-paiement">06 → MTN MoMo &nbsp;•&nbsp; 05 / 04 → Airtel Money<br>Tu recevras une demande de confirmation sur ton téléphone.</p>
+    <button class="btn-payer-fasc" id="btnPayerFasc" onclick="payerFascicule()" disabled>Payer maintenant →</button>
+    <button class="btn-annuler-paiement" onclick="fermerPaiement()">Annuler</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a class="active" onclick="go('accueil.html')"><div class="nav-dot"></div>Accueil</a>
+  <a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a>
+  <a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a>
+  <a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script>ProtegerPage('etudiant');chargerAccueil();demarrerSliderHero();</script>
+</body>
+</html>

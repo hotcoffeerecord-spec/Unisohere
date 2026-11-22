@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Lecteur - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', Arial, sans-serif; background: #fff; color: #111; display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+  header { background: #fff; padding: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; }
+  .btn-retour { background: #000; color: #fff; border: none; cursor: pointer; padding: 10px 14px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+  .titre-wrap { flex: 1; min-width: 0; }
+  #titreCours { font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #sousTitre { font-size: 12px; color: #888; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn-partager { background: #f2f2f2; color: #000; border: none; cursor: pointer; padding: 10px 12px; border-radius: 10px; font-weight: 800; font-size: 13px; white-space: nowrap; }
+  .btn-mescours { background: #000; color: #fff; border: none; cursor: pointer; padding: 10px 12px; border-radius: 10px; font-weight: 800; font-size: 13px; white-space: nowrap; }
+  .btn-mescours.dans { background: #fff; color: #000; border: 1.5px solid #000; }
+  #zoneLecteur { flex: 1; background: #f2f2f2; display: flex; align-items: center; justify-content: center; position: relative; overflow: auto; }
+  iframe { width: 100%; height: 100%; border: none; background: #fff; }
+  #etat { text-align: center; padding: 20px; color: #111; }
+  #etat h2 { margin-bottom: 10px; }
+  #etat p { color: #888; margin-bottom: 16px; }
+  .loader { width: 45px; height: 45px; border: 4px solid #eee; border-top: 4px solid #000; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-voir-fil { background: #000; color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; display: none; margin-top: 8px; }
+  #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 18px; border-radius: 12px; font-weight: 700; display: none; z-index: 99; }
+</style>
+</head>
+<body>
+<header>
+  <button class="btn-retour" onclick="retourLecteur()">← Retour</button>
+  <div class="titre-wrap">
+    <div id="titreCours">Chargement...</div>
+    <div id="sousTitre">...</div>
+  </div>
+  <button class="btn-partager" onclick="partagerCoursLecteur()">↗ Partager</button>
+  <button class="btn-mescours" id="btnMesCours" onclick="toggleMesCoursLecteur()" style="display:none">+ Mes Cours</button>
+</header>
+<div id="zoneLecteur">
+  <div id="etat">
+    <div class="loader" id="loader"></div>
+    <h2 id="etatTitre">Chargement du cours...</h2>
+    <p id="etatTexte">Patiente quelques secondes</p>
+    <button class="btn-voir-fil" id="btnVoirFil" onclick="allerVoirDansFil()">Voir ce cours dans le fil d'accueil →</button>
+  </div>
+  <iframe id="pdfFrame" style="display:none"></iframe>
+</div>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script>
+  const $ = s => document.querySelector(s);
+  let LECTEUR_ID = null;
+  let LECTEUR_USER = null;
+  let EST_DANS_MES_COURS = false;
+  function toast(msg) {
+    const t = $("#toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2500);
+  }
+  // ===== RETOUR - TOUJOURS VERS LE FIL acceuil.html, MEME SI COURS DISPONIBLE =====
+  function retourLecteur() { allerVoirDansFil(); }
+  function allerVoirDansFil() {
+    if (!LECTEUR_ID) { window.location.href = "acceuil.html"; return; }
+    window.location.href = "acceuil.html?cours=" + LECTEUR_ID;
+  }
+  function afficherErreur(titre, texte, bloque = false) {
+    const loader = $("#loader");
+    if (loader) loader.style.display = "none";
+    $("#etatTitre").textContent = titre;
+    $("#etatTexte").textContent = texte;
+    $("#etat").style.display = "block";
+    $("#pdfFrame").style.display = "none";
+    const btnFil = $("#btnVoirFil");
+    if (btnFil) {
+      if (bloque) {
+        btnFil.style.display = "inline-block";
+        btnFil.textContent = titre.includes("Premium") ? "Débloquer dans le fil →" : "Acheter dans le fil →";
+      } else {
+        btnFil.style.display = "none";
+      }
+    }
+  }
+  async function partagerCoursLecteur() {
+    if (!LECTEUR_ID) return;
+    const lien = window.location.origin + window.location.pathname + "?id=" + LECTEUR_ID;
+    const titre = $("#titreCours").textContent || "Cours";
+    if (navigator.share) {
+      try { await navigator.share({ title: titre, text: "Regarde ce cours sur Unisphere : " + titre, url: lien }); return; } catch(e) {}
+    }
+    try {
+      await navigator.clipboard.writeText(lien);
+      toast("Lien copié ! Envoie-le à tes amis");
+    } catch(e) {
+      prompt("Copie ce lien :", lien);
+    }
+  }
+  function majBoutonMesCours() {
+    const btn = $("#btnMesCours");
+    if (!btn) return;
+    btn.style.display = "inline-block";
+    if (EST_DANS_MES_COURS) { btn.textContent = "✕ Retirer"; btn.classList.add("dans"); }
+    else { btn.textContent = "+ Mes Cours"; btn.classList.remove("dans"); }
+  }
+  async function verifierMesCours() {
+    if (!LECTEUR_USER || !LECTEUR_ID) return;
+    const { data } = await supabaseClient.from("favoris").select("id").eq("user_id", LECTEUR_USER.id).eq("module_id", LECTEUR_ID).maybeSingle();
+    EST_DANS_MES_COURS = !!data;
+    majBoutonMesCours();
+  }
+  async function toggleMesCoursLecteur() {
+    if (!LECTEUR_USER || !LECTEUR_ID) return;
+    const btn = $("#btnMesCours");
+    btn.disabled = true;
+    if (EST_DANS_MES_COURS) {
+      const { error } = await supabaseClient.from("favoris").delete().eq("user_id", LECTEUR_USER.id).eq("module_id", LECTEUR_ID);
+      if (error) { toast("Impossible de retirer"); btn.disabled = false; return; }
+      EST_DANS_MES_COURS = false;
+      toast("Retiré de Mes Cours");
+    } else {
+      const { error } = await supabaseClient.from("favoris").insert({ user_id: LECTEUR_USER.id, module_id: LECTEUR_ID });
+      if (error) { toast("Impossible d'ajouter"); btn.disabled = false; return; }
+      EST_DANS_MES_COURS = true;
+      toast("Ajouté à Mes Cours ♥");
+    }
+    majBoutonMesCours();
+    btn.disabled = false;
+  }
+  function resoudreUrl(m) {
+    let url = m.fichier_url || m.pdf_url || m.file_url || m.fichier || m.pdf || m.file || m.document_url || m.url_fichier || m.lien || m.url || "";
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    const buckets = ["modules", "fichiers", "cours", "pdfs", "fascicules", "public", "storage"];
+    for (const bucket of buckets) {
+      const { data } = supabaseClient.storage.from(bucket).getPublicUrl(url);
+      if (data?.publicUrl) return data.publicUrl;
+    }
+    return url;
+  }
+  async function chargerLecteur() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      LECTEUR_ID = id;
+      if (!id) { afficherErreur("Aucun cours", "Lien invalide"); return; }
+      if (typeof supabaseClient === "undefined") { afficherErreur("Erreur", "1-config.js n'est pas chargé"); return; }
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        const retour = encodeURIComponent("lecteur.html?id=" + id);
+        window.location.href = "connexion.html?next=" + retour;
+        return;
+      }
+      LECTEUR_USER = user;
+      const { data: m, error } = await supabaseClient.from("modules").select("*, profiles:enseignant_id(full_name)").eq("id", id).maybeSingle();
+      if (error || !m) { afficherErreur("Cours introuvable", "Ce cours n'existe plus."); return; }
+      $("#titreCours").textContent = m.titre || "Cours";
+      $("#sousTitre").textContent = (m.matiere || "") + (m.profiles?.full_name ? " • Par " + m.profiles.full_name : "");
+      await verifierMesCours();
+      const { data: profil } = await supabaseClient.from("profiles").select("premium").eq("id", user.id).maybeSingle();
+      const isPremiumUser = !!profil?.premium;
+      if (m.type === "fascicule") {
+        const gratuit = !m.prix || Number(m.prix) === 0;
+        if (!gratuit) {
+          const { data: achat } = await supabaseClient.from("mes_cours").select("id").eq("user_id", user.id).eq("module_id", id).maybeSingle();
+          if (!achat) { afficherErreur("Fascicule payant", "Tu dois acheter ce fascicule pour le lire.", true); return; }
+        }
+      } else {
+        if (m.is_premium && !isPremiumUser) { afficherErreur("Cours Premium", "Passe en Premium pour lire ce cours.", true); return; }
+      }
+      try {
+        const { data: derniere } = await supabaseClient.from("lectures").select("created_at").eq("user_id", user.id).eq("module_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        const peutCompter = !derniere || (Date.now() - new Date(derniere.created_at).getTime() >= 10000);
+        if (peutCompter) await supabaseClient.from("lectures").insert({ user_id: user.id, module_id: id });
+      } catch(e) {}
+      const url = resoudreUrl(m);
+      if (!url) { afficherErreur("Aucun fichier", "Ce cours n'a pas de fichier."); return; }
+      const frame = $("#pdfFrame");
+      frame.src = url;
+      frame.onload = () => { $("#etat").style.display = "none"; frame.style.display = "block"; };
+      setTimeout(() => { if (frame.style.display === "none") { $("#etat").style.display = "none"; frame.style.display = "block"; } }, 5000);
+      try { localStorage.setItem("dernier_cours_id", id); } catch(e) {}
+    } catch(e) { afficherErreur("Erreur", e.message); }
+  }
+  chargerLecteur();
+</script>
+</body>
+</html>

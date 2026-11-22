@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Notifications - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('acceuil.html')">Retour</button><h1 class="titre-page">Notifications</h1><span class="badge-nb" id="badgeNb">0</span></div>
+<div class="premium-card" id="premiumCard"><div class="premium-top"><div><b><span id="titrePremium">Mon Premium</span></b><p id="sousTitrePremium">Compte Gratuit</p></div><div class="jours" id="joursRestants">0<span> jours</span></div></div><div class="progress"><div class="progress-fill" id="barrePremium" style="width:0%"></div></div><div class="premium-infos"><span>Plan : <b id="planPremium">-</b></span><span>Debut : <b id="debutPremium">-</b></span><span>Fin : <b id="finPremium">-</b></span></div><button class="btn-premium btn-rouge" id="btnPremium" onclick="go('abonnementpremium.html')">Passer en Premium</button></div>
+<div class="total-card"><div><b>Nombre total de cours</b><p>Dans Espace de travail</p></div><div class="total-nb" id="totalCours">0</div></div>
+<div class="section-notif">Recentes <span onclick="toutLire()">Tout marquer comme lu</span></div>
+<div class="notifs" id="listeNotifs"></div>
+<div class="section-notif">Transactions effectuees</div>
+<div class="transacs" id="listeTransacs"></div>
+</div>
+<div class="bottom-nav"><a onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="10-notification.js"></script>
+</body>
+</html>

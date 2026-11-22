@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Examen Blanc - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('acceuil.html')">←</button><h1 class="titre-page" style="flex:1;text-align:center">Examen Blanc</h1><span style="width:38px"></span></div>
+
+<!-- PHOTO EN HAUT -->
+<div class="hero-slider" style="height:200px">
+  <div class="hero-track" style="width:100%">
+    <div class="hero-slide" style="width:100%">
+      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800" alt="Examen blanc" loading="lazy">
+      <div class="hero-text"><h1>PASSER UN<br>EXAMEN BLANC.</h1><p>Entraîne-toi en conditions réelles, comme le jour J. Chrono, vraies questions, vrai score.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-title"><h1>Mes <span>examens blancs</span></h1><p>Choisis un examen et lance-toi. Ton score apparaîtra dans le classement.</p></div>
+
+<!-- POUR L'INSTANT : AUCUN EXAMEN -->
+<div class="courses" id="listeExamens">
+  <div class="empty">📝<br><b>Aucun examen disponible</b><br>Les profs n'ont pas encore publié d'examen blanc pour ton programme.<br>Reviens un peu plus tard.</div>
+</div>
+
+<!-- LIEN VERS LA 2EME PAGE -->
+<div style="padding:20px 16px 0">
+  <div class="card" onclick="go('classement.html')" style="cursor:pointer">
+    <div class="card-info">
+      <h3>🏆 Voir le classement</h3>
+      <p>Découvre qui révise le mieux et où tu te situes.</p>
+    </div>
+    <div class="card-actions">
+      <button class="btn-small btn-voir" onclick="event.stopPropagation();go('classement.html')">Voir →</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+</div>
+
+<div class="bottom-nav"><a class="active" onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script>ProtegerPage('etudiant');</script>
+</body>
+</html>

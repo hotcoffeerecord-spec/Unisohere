@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<title>Connexion - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stylegroupe.css">
+</head>
+<body>
+<div class="top"><a href="index.html" class="logo"><span class="logo-mark">U</span> UNISPHERE</a><a href="index.html" class="back">Retour</a></div>
+<div class="card">
+<span class="badge">CONNEXION</span>
+<h1>Bon retour <span>parmi nous.</span></h1>
+<p class="sub">Connecte-toi a ta communaute pour reviser.</p>
+<label>Email *</label><input id="emailInput" type="email" placeholder="vous@email.com">
+<label>Mot de passe *</label><div class="oeil"><input id="passwordInput" type="password" placeholder="Ton mot de passe"><button type="button" onclick="togglePassword()">Voir</button></div>
+<button class="btn-connexion" onclick="seConnecter()">Se connecter</button>
+<a href="#" class="oublie" onclick="motDePasseOublie();return false;">Mot de passe oublie ?</a>
+<div id="msgConnexion"></div>
+</div>
+
+<!-- 1ER CARRE : ETUDIANT -> inscription-etudiant.html -->
+<a href="inscription-etudiant.html" class="carre-lien carre-etudiant">
+  <b>Etudiant ?</b>
+  <p>Connecte-toi pour acceder aux cours et Quiz de ta communaute.</p>
+  <span class="carre-fleche">S'inscrire comme Etudiant &gt;</span>
+</a>
+
+<!-- CARRE : ENSEIGNANT -> inscription-enseignant.html -->
+<a href="inscription-enseignant.html" class="carre-lien carre-enseignant">
+  <b>Enseignant ?</b>
+  <p>Publie tes cours, fiches et fascicules et gagne avec tes lectures.</p>
+  <span class="carre-fleche">S'inscrire comme Enseignant &gt;</span>
+</a>
+
+<!-- BARRE DU BAS : JUSTE ACCUEIL -->
+<div class="barre-bas">
+  <a href="index.html" class="btn-accueil-seul">Accueil</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="5-connexion.js"></script>
+</body>
+</html>

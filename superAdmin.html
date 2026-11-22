@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin — Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
+body{background:#0A0A0A;color:#fff;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none}
+input,select,textarea{font-family:inherit;outline:none}
+.layout{display:flex;min-height:100vh}
+.verrou{position:fixed;inset:0;background:#0A0A0A;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;text-align:center}
+.verrou.show{display:flex}
+.verrou-box{background:#111;border:1px solid #222;border-radius:20px;padding:32px 24px;max-width:380px;width:100%}
+.verrou-box h2{font-size:22px;font-weight:900;margin-bottom:8px}
+.verrou-box h2 span{color:#ff3b30}
+.verrou-box p{font-size:13px;color:#888;line-height:1.6;margin-bottom:18px}
+.verrou-box .btn{width:100%;display:block;margin-top:8px}
+.sidebar{width:260px;flex-shrink:0;background:#111;border-right:1px solid #222;padding:22px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:50}
+.logo{font-size:20px;font-weight:900;letter-spacing:-.5px}
+.logo span{color:#7CFC00}
+.logo small{display:block;font-size:11px;font-weight:600;color:#888;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.nav{margin-top:28px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1}
+.nav-label{font-size:11px;font-weight:700;color:#666;letter-spacing:1px;text-transform:uppercase;padding:12px 10px 6px}
+.nav-btn{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:10px;background:transparent;color:#bbb;font-size:14px;font-weight:600;text-align:left;width:100%}
+.nav-btn:hover{background:#1A1A1A;color:#fff}
+.nav-btn.active{background:#fff;color:#000}
+.nav-btn.active .count{background:#000;color:#fff}
+.count{font-size:11px;font-weight:800;background:#222;color:#fff;padding:3px 8px;border-radius:999px}
+.sidebar-foot{padding-top:16px;border-top:1px solid #222}
+.admin-info{display:flex;gap:10px;align-items:center}
+.avatar{width:40px;height:40px;border-radius:50%;background:#7CFC00;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex-shrink:0}
+.admin-info b{font-size:13px;display:block}
+.admin-info span{font-size:11px;color:#888;word-break:break-all}
+.btn-quit{width:100%;margin-top:12px;background:#1A1A1A;color:#fff;padding:11px;border-radius:10px;font-weight:700;font-size:13px;border:1px solid #222}
+.btn-quit:hover{border-color:#ff3b30;color:#ff3b30}
+.btn-close-menu{display:none}
+.mobile-top{display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 14px 0}
+.btn-menu{width:44px;height:44px;border-radius:12px;background:#111;border:1px solid #222;color:#fff;font-size:20px;flex-shrink:0}
+.mobile-logo{font-weight:900;font-size:17px;flex:1}
+.mobile-logo span{color:#7CFC00}
+.btn-refresh{padding:10px 14px;border-radius:10px;background:#7CFC00;color:#000;font-weight:800;font-size:12px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none}
+.overlay.show{display:block}
+.main{flex:1;min-width:0;padding:24px 28px 110px}
+.breadcrumb{font-size:12px;color:#888;margin-bottom:8px}
+.breadcrumb b{color:#fff}
+.breadcrumb a{color:#888}
+.breadcrumb a:hover{color:#7CFC00}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.topbar h1{font-size:26px;font-weight:900;letter-spacing:-.5px}
+.topbar p{font-size:13px;color:#888;margin-top:3px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:11px 16px;border-radius:10px;font-weight:700;font-size:13px}
+.btn-green{background:#7CFC00;color:#000}
+.btn-green:hover{background:#8dff1a}
+.btn-dark{background:#1A1A1A;color:#fff;border:1px solid #222}
+.btn-dark:hover{border-color:#444}
+.btn-red{background:#ff3b30;color:#fff}
+.btn-ghost{background:transparent;color:#aaa;border:1px solid #222}
+.btn-ghost:hover{color:#fff;border-color:#444}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.stats.cachee{display:none}
+.stat{background:#111;border:1px solid #222;border-radius:16px;padding:18px;cursor:pointer}
+.stat:hover{border-color:#444}
+.stat small{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase}
+.stat b{font-size:28px;display:block;margin-top:6px;letter-spacing:-.5px}
+.stat span{font-size:12px;color:#888}
+.stat.green b{color:#7CFC00}
+.stat.red b{color:#ff3b30}
+.stat.yellow b{color:#FFC107}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.mini-stat{background:#0A0A0A;border:1px solid #222;border-radius:14px;padding:16px}
+.mini-stat small{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase}
+.mini-stat b{font-size:24px;display:block;margin-top:5px}
+.mini-stat span{font-size:12px;color:#888}
+.mini-stat.green b{color:#7CFC00}
+.mini-stat.yellow b{color:#FFC107}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;padding:10px 16px;border-radius:999px;background:#141414;color:#aaa;font-size:13px;font-weight:700;border:1px solid #222}
+.tab.active{background:#fff;color:#000;border-color:#fff}
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.subtab{padding:8px 14px;border-radius:999px;background:#111;color:#bbb;font-size:12px;font-weight:700;border:1px solid #222}
+.subtab.active{background:#7CFC00;color:#000;border-color:#7CFC00}
+.card{background:#111;border:1px solid #222;border-radius:16px;padding:18px;margin-bottom:16px}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.card-head h3{font-size:16px;font-weight:800}
+.card-head p{font-size:12px;color:#888;margin-top:3px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.search{flex:1;min-width:220px;background:#0A0A0A;border:1px solid #222;border-radius:10px;padding:11px 14px;color:#fff;font-size:14px}
+.search:focus{border-color:#7CFC00}
+.search::placeholder{color:#666}
+.select{background:#0A0A0A;border:1px solid #222;border-radius:10px;padding:11px 12px;color:#fff;font-size:13px}
+.table-wrap{overflow-x:auto;border:1px solid #222;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px}
+thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#888;padding:12px 14px;background:#161616;border-bottom:1px solid #222;white-space:nowrap;cursor:pointer}
+thead th:hover{color:#fff}
+tbody td{padding:12px 14px;border-bottom:1px solid #1A1A1A;vertical-align:top;max-width:280px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#141414}
+.muted{color:#888;font-size:12px}
+.bold{font-weight:700}
+.badge{display:inline-block;font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.badge-green{background:#1a2a10;color:#7CFC00;border:1px solid #2a4a00}
+.badge-red{background:#2a1212;color:#ff6b6b;border:1px solid #4a2222}
+.badge-grey{background:#1A1A1A;color:#aaa;border:1px solid #222}
+.badge-violet{background:#1a1230;color:#b79cff;border:1px solid #33225e}
+.badge-yellow{background:#2a2200;color:#FFC107;border:1px solid #4a3a00}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn-mini{padding:7px 11px;border-radius:8px;font-size:11px;font-weight:800;white-space:nowrap}
+.btn-mini.edit{background:#1A1A1A;color:#fff;border:1px solid #333}
+.btn-mini.del{background:#ff3b30;color:#fff}
+.btn-mini.green{background:#7CFC00;color:#000}
+.btn-mini.view{background:#fff;color:#000}
+.empty{padding:32px;text-align:center;color:#888;font-size:13px;line-height:1.6}
+.empty b{color:#fff;display:block;font-size:15px;margin-bottom:4px}
+.form{display:grid;gap:12px;margin-top:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#888;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:#0A0A0A;border:1px solid #222;border-radius:10px;padding:12px 13px;color:#fff;font-size:14px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#7CFC00}
+.field textarea{resize:vertical;min-height:80px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #1A1A1A;font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv span{color:#888;text-align:right}
+.pagination{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;color:#888}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;color:#000;padding:13px 20px;border-radius:999px;font-size:13px;font-weight:700;z-index:200;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.panel{display:none}
+.panel.active{display:block}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #222;z-index:60;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.bottom-nav-inner{display:flex;justify-content:space-around}
+.bottom-nav button{background:none;color:#888;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:6px 8px;min-width:56px}
+.bottom-nav button.active{color:#7CFC00}
+.bottom-nav button span{font-size:18px;line-height:1}
+@media(max-width:900px){
+  .sidebar{position:fixed;left:-280px;top:0;bottom:0;height:100vh;transition:left .25s;box-shadow:20px 0 60px rgba(0,0,0,.6)}
+  .sidebar.open{left:0}
+  .btn-close-menu{display:flex;width:36px;height:36px;border-radius:50%;background:#1A1A1A;color:#fff;align-items:center;justify-content:center;font-size:16px;margin-left:auto}
+  .mobile-top{display:flex}
+  .main{padding:14px 14px 110px}
+  .stats{grid-template-columns:1fr 1fr}
+  .mini-stats{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .topbar h1{font-size:22px}
+  .bottom-nav{display:block}
+  .top-actions .btn-dark{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="verrou" id="verrouAdmin">
+  <div class="verrou-box">
+    <h2>Accès <span>refusé</span></h2>
+    <p>Cette page est réservée au Super Administrateur.<br><span id="verrouEmail" style="color:#fff;font-weight:700"></span><br>Tu vas être redirigé vers l'accueil.</p>
+    <button class="btn btn-green" onclick="go('accueil.html')">Retour à l'accueil</button>
+    <button class="btn btn-dark" onclick="go('connexion.html')">Se connecter avec un autre compte</button>
+  </div>
+</div>
+
+<div class="layout">
+<div class="overlay" id="overlay" onclick="fermerMenu()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div style="display:flex;align-items:center;gap:8px"><div class="logo">UNISPHERE <span>ADMIN</span><small>Super Administrateur</small></div><button class="btn-close-menu" onclick="fermerMenu()">X</button></div>
+  <nav class="nav">
+    <div class="nav-label">Général</div>
+    <button class="nav-btn active" data-panel="vue" onclick="allerVers('vue')">Vue d'ensemble <span class="count" id="cVue">-</span></button>
+    <button class="nav-btn" data-panel="dates" onclick="allerVers('dates')">Dates et activité</button>
+    <div class="nav-label">Contenu</div>
+    <button class="nav-btn" data-panel="programmes" onclick="allerVers('programmes')">Programmes <span class="count" id="cProgs">-</span></button>
+    <button class="nav-btn" data-panel="matieres" onclick="allerVers('matieres')">Matières <span class="count" id="cMats">-</span></button>
+    <button class="nav-btn" data-panel="contenus" onclick="allerVers('contenus')">Cours / Fiches / Fascicules <span class="count" id="cMods">-</span></button>
+    <button class="nav-btn" data-panel="quiz" onclick="allerVers('quiz')">Quiz et Examens <span class="count" id="cQuiz">-</span></button>
+    <div class="nav-label">Utilisateurs et argent</div>
+    <button class="nav-btn" data-panel="users" onclick="allerVers('users')">Utilisateurs <span class="count" id="cUsers">-</span></button>
+    <button class="nav-btn" data-panel="transactions" onclick="allerVers('transactions')">Transactions <span class="count" id="cTrans">-</span></button>
+    <button class="nav-btn" data-panel="lectures" onclick="allerVers('lectures')">Lectures <span class="count" id="cLect">-</span></button>
+    <div class="nav-label">Système</div>
+    <button class="nav-btn" data-panel="base" onclick="allerVers('base')">Base de données</button>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="admin-info"><div class="avatar" id="avatarAdmin">A</div><div><b id="nomAdmin">Admin</b><span id="emailAdmin">Chargement...</span></div></div>
+    <button class="btn-quit" onclick="retourSite()">Retour au site</button>
+  </div>
+</aside>
+
+<main class="main" id="mainContent">
+  <div class="mobile-top">
+    <button class="btn-menu" onclick="ouvrirMenu()">=</button>
+    <div class="mobile-logo">UNISPHERE <span>ADMIN</span></div>
+    <button class="btn-refresh" onclick="chargerTout()">Actualiser</button>
+  </div>
+
+  <div class="breadcrumb" id="breadcrumb">Admin / <b>Vue d'ensemble</b></div>
+
+  <div class="topbar">
+    <div><h1 id="titrePanel">Vue d'ensemble</h1><p id="sousTitrePanel">Tout voir, tout gérer, en temps réel.</p></div>
+    <div class="top-actions">
+      <button class="btn btn-dark" onclick="chargerTout()">Actualiser</button>
+      <button class="btn btn-ghost" id="btnToggleStats" onclick="toggleStats()">Masquer les stats</button>
+      <button class="btn btn-green" onclick="allerVers('programmes')">+ Nouveau programme</button>
+    </div>
+  </div>
+
+  <!-- BLOC STATS - MASQUABLE -->
+  <div class="stats" id="blocStats">
+    <div class="stat" onclick="allerVers('users')"><small>Utilisateurs</small><b id="stUsers">-</b><span id="stUsersTxt"></span></div>
+    <div class="stat" onclick="allerVers('contenus')"><small>Contenus</small><b id="stModules">-</b><span>Cours, fiches et fascicules</span></div>
+    <div class="stat green" onclick="allerVers('users')"><small>Premium</small><b id="stPremium">-</b><span>Comptes premium actifs</span></div>
+    <div class="stat red" onclick="allerVers('transactions')"><small>En attente</small><b id="stAttente">-</b><span>Paiements à valider</span></div>
+  </div>
+
+  <!-- VUE D'ENSEMBLE -->
+  <section class="panel active" id="panel-vue">
+    <div class="card"><div class="card-head"><div><h3>Actions rapides</h3><p>Créer, affilier, gérer sans quitter cette page.</p></div></div>
+      <div class="toolbar">
+        <button class="btn btn-green" onclick="allerVers('programmes')">Créer un programme</button>
+        <button class="btn btn-dark" onclick="allerVers('matieres')">Affilier une matière</button>
+        <button class="btn btn-dark" onclick="allerVers('quiz')">Créer un quiz</button>
+        <button class="btn btn-ghost" onclick="allerVers('transactions')">Voir les paiements en attente</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-head"><div><h3>Dernière activité</h3><p>Les 10 dernières lectures. Clique sur une ligne pour voir le contenu.</p></div></div><div id="activiteRecente"></div></div>
+    <div class="card"><div class="card-head"><div><h3>Alertes</h3><p>Ce qui demande ton attention.</p></div></div><div id="alertesAdmin"></div></div>
+  </section>
+
+  <!-- PROGRAMMES -->
+  <section class="panel" id="panel-programmes">
+    <div class="card"><div class="card-head"><div><h3>Créer un programme</h3><p>Exemple : Médecine, Droit, Informatique.</p></div></div>
+      <div class="form"><div class="form-row"><div class="field"><label>Nom du programme</label><input id="newProgNom" placeholder="Médecine"></div><div class="field"><label>Description (optionnel)</label><input id="newProgDesc" placeholder="Description"></div></div>
+      <div><button class="btn btn-green" onclick="ajouterProgramme()">Créer le programme</button></div></div>
+    </div>
+    <div class="card"><div class="card-head"><div><h3>Tous les programmes</h3><p id="nbProgs"></p></div><button class="btn btn-dark" onclick="allerVers('matieres')">Voir les matières -></button></div>
+      <div class="toolbar"><input class="search" placeholder="Rechercher un programme..." oninput="filtrerTable('tableProgs',this.value)"></div>
+      <div id="listeProgrammes"></div>
+    </div>
+  </section>
+
+  <!-- MATIERES -->
+  <section class="panel" id="panel-matieres">
+    <div class="card"><div class="card-head"><div><h3>Affilier une matière à un programme</h3><p>La matière apparaîtra uniquement pour les étudiants de ce programme.</p></div></div>
+      <div class="form"><div class="form-row"><div class="field"><label>Programme</label><select id="matProgSelect"><option value="">Choisir un programme...</option></select></div><div class="field"><label>Nom de la matière</label><input id="newMatNom" placeholder="Anatomie"></div></div>
+      <div><button class="btn btn-green" onclick="ajouterMatiere()">Affilier la matière</button></div></div>
+    </div>
+    <div class="card"><div class="card-head"><div><h3>Toutes les matières</h3><p>Regroupées par programme.</p></div><button class="btn btn-dark" onclick="allerVers('programmes')"><- Programmes</button></div>
+      <div class="toolbar"><input class="search" placeholder="Rechercher une matière..." oninput="filtrerTable('tableMatieres',this.value)"><select class="select" id="filtreMatProg" onchange="chargerMatieres()"><option value="">Tous les programmes</option></select></div>
+      <div id="listeMatieres"></div>
+    </div>
+  </section>
+
+  <!-- CONTENUS -->
+  <section class="panel" id="panel-contenus">
+    <div class="card"><div class="card-head"><div><h3>Vues des contenus — Période active = Abonnement prof (15 000 FCFA)</h3><p>Une lecture est <b style="color:#7CFC00">active / payante</b> si elle a lieu avant <b>abonnement_prof_expire_le</b> de l'auteur. Après expiration, elle est hors période et n'est pas payée. Le <b>statut_prof</b> change quand l'abonnement expire.</p></div></div>
+      <div class="mini-stats">
+        <div class="mini-stat"><small>Vues totales</small><b id="vuesTotal">-</b><span>Toutes les lectures</span></div>
+        <div class="mini-stat green"><small>Lectures actives / Payantes</small><b id="vuesActives">-</b><span>Avant expiration abonnement prof</span></div>
+        <div class="mini-stat yellow"><small>Lectures hors période</small><b id="vuesHorsPeriode">-</b><span>Après expiration — non payées</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-head"><div><h3>Tous les contenus</h3><p>Titre, type, matière, programme, prix, prof, abonnement prof, vues totales, vues actives payantes, hors période, date.</p></div><button class="btn btn-dark" onclick="allerVers('quiz')">Voir les quiz -></button></div>
+      <div class="toolbar">
+        <input class="search" placeholder="Rechercher un contenu (titre, matière, prof...)" oninput="filtrerTable('tableContenus',this.value)">
+        <select class="select" onchange="FILTRE_CONTENU=this.value;chargerContenus()"><option value="tout">Tous les types</option><option value="cours">Cours</option><option value="fiche">Fiches</option><option value="fascicule">Fascicules</option></select>
+        <select class="select" id="filtreContenuProg" onchange="FILTRE_CONTENU_PROG=this.value;chargerContenus()"><option value="">Tous les programmes</option></select>
+        <select class="select" onchange="FILTRE_VUES=this.value;chargerContenus()"><option value="tout">Toutes les vues</option><option value="actives">Seulement actives / payantes</option><option value="hors">Seulement hors période</option></select>
+      </div>
+      <div id="listeContenus"></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="panel-quiz">
+    <div class="subtabs">
+      <button class="subtab active" onclick="showSubQuiz('liste',this)">Liste des quiz</button>
+      <button class="subtab" onclick="showSubQuiz('ajout',this)">Créer un quiz</button>
+      <button class="subtab" onclick="showSubQuiz('exam',this)">Examens blancs</button>
+    </div>
+    <div id="quiz-liste"><div class="card"><div class="card-head"><div><h3>Tous les quiz</h3><p>Titre, question, matière, programme, date.</p></div></div><div class="toolbar"><input class="search" placeholder="Rechercher un quiz..." oninput="filtrerTable('tableQuiz',this.value)"></div><div id="listeQuiz"></div></div></div>
+    <div id="quiz-ajout" style="display:none"><div class="card"><h3>Créer un quiz</h3><div class="form">
+      <div class="field"><label>Titre</label><input id="quizTitre" placeholder="Titre du quiz"></div>
+      <div class="field"><label>Question</label><input id="quizQuestion" placeholder="Question"></div>
+      <div class="form-row"><div class="field"><label>Réponse 1</label><input id="quizRep1"></div><div class="field"><label>Réponse 2</label><input id="quizRep2"></div></div>
+      <div class="form-row"><div class="field"><label>Réponse 3</label><input id="quizRep3"></div><div class="field"><label>Réponse 4</label><input id="quizRep4"></div></div>
+      <div class="field"><label>Bonne réponse (écrire exactement la bonne)</label><input id="quizBonne"></div>
+      <div class="form-row"><div class="field"><label>Programme</label><select id="quizProg"><option value="">Programme...</option></select></div><div class="field"><label>Matière</label><input id="quizMatiere" placeholder="Matière"></div></div>
+      <div><button class="btn btn-green" onclick="ajouterQuiz()">Créer le quiz</button></div>
+    </div></div></div>
+    <div id="quiz-exam" style="display:none"><div class="card"><h3>Examens blancs</h3><div class="empty"><b>Aucun examen disponible</b>Les examens créés apparaîtront ici.</div></div></div>
+  </section>
+
+  <!-- UTILISATEURS -->
+  <section class="panel" id="panel-users">
+    <div class="card"><div class="card-head"><div><h3>Tous les utilisateurs</h3><p>Nom, email, rôle, programme, premium, lectures, abonnement prof, statut prof, date d'inscription.</p></div><button class="btn btn-dark" onclick="allerVers('transactions')">Voir les transactions -></button></div>
+      <div class="toolbar">
+        <input class="search" placeholder="Rechercher (nom, email, programme...)" oninput="filtrerTable('tableUsers',this.value)">
+        <select class="select" onchange="FILTRE_USER=this.value;chargerUsers()"><option value="tout">Tous</option><option value="etudiant">Étudiants</option><option value="prof">Profs</option><option value="premium">Premium</option><option value="sansprog">Sans programme</option></select>
+      </div>
+      <div id="listeUsers"></div>
+      <div class="pagination"><span id="usersCount"></span><span>Tri : les plus récents en premier</span></div>
+    </div>
+  </section>
+
+  <!-- TRANSACTIONS -->
+  <section class="panel" id="panel-transactions">
+    <div class="card"><div class="card-head"><div><h3>Total des transactions</h3><p>Combien fait le total de toutes les transactions, payées et en attente.</p></div></div>
+      <div class="mini-stats">
+        <div class="mini-stat"><small>Total toutes transactions</small><b id="totalTransTout">-</b><span id="nbTransTout"></span></div>
+        <div class="mini-stat green"><small>Total payé</small><b id="totalTransPaye">-</b><span id="nbTransPaye"></span></div>
+        <div class="mini-stat yellow"><small>Total en attente</small><b id="totalTransAttente">-</b><span id="nbTransAttente"></span></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-head"><div><h3>Toutes les transactions</h3><p>Achats de fascicules et abonnements. Numéro, opérateur, statut, date.</p></div><button class="btn btn-dark" onclick="allerVers('lectures')">Voir les lectures -></button></div>
+      <div class="toolbar">
+        <input class="search" placeholder="Rechercher (nom, numéro, opérateur...)" oninput="filtrerTable('tableTrans',this.value)">
+        <select class="select" onchange="FILTRE_TRANS=this.value;chargerTransactions()"><option value="tout">Toutes</option><option value="attente">En attente</option><option value="paye">Payées</option></select>
+      </div>
+      <div id="listeTransactions"></div>
+    </div>
+  </section>
+
+  <!-- LECTURES -->
+  <section class="panel" id="panel-lectures">
+    <div class="card"><div class="card-head"><div><h3>Toutes les lectures</h3><p>Qui a lu quoi, quand, et si c'était pendant l'abonnement du prof (payante) ou après (hors période).</p></div><button class="btn btn-dark" onclick="allerVers('dates')">Voir les dates -></button></div>
+      <div class="toolbar"><input class="search" placeholder="Rechercher..." oninput="filtrerTable('tableLect',this.value)"></div>
+      <div id="listeLectures"></div>
+    </div>
+  </section>
+
+  <!-- DATES -->
+  <section class="panel" id="panel-dates">
+    <div class="card"><h3>Inscriptions par jour</h3><div id="datesContenu"></div></div>
+    <div class="card"><h3>Derniers inscrits</h3><div id="derniersInscrits"></div></div>
+    <div class="card"><h3>Lectures par jour</h3><div id="datesLectures"></div></div>
+  </section>
+
+  <!-- BASE -->
+  <section class="panel" id="panel-base">
+    <div class="card"><h3>Base de données</h3><p class="muted">Clique sur une table pour voir son contenu brut (50 lignes max).</p>
+      <div class="toolbar">
+        <button class="btn btn-dark" onclick="voirTable('profiles')">profiles</button>
+        <button class="btn btn-dark" onclick="voirTable('programmes')">programmes</button>
+        <button class="btn btn-dark" onclick="voirTable('matieres')">matieres</button>
+        <button class="btn btn-dark" onclick="voirTable('modules')">modules</button>
+        <button class="btn btn-dark" onclick="voirTable('quiz')">quiz</button>
+        <button class="btn btn-dark" onclick="voirTable('lectures')">lectures</button>
+        <button class="btn btn-dark" onclick="voirTable('favoris')">favoris</button>
+        <button class="btn btn-dark" onclick="voirTable('mes_cours')">mes_cours</button>
+      </div>
+      <div id="contenuTable"></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- BOTTOM NAV - TOUJOURS AFFICHE, PLUS DE SYSTEME MASQUER -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-inner">
+    <button data-panel="vue" onclick="allerVers('vue')"><span>⌂</span>Vue</button>
+    <button data-panel="programmes" onclick="allerVers('programmes')"><span>▦</span>Programmes</button>
+    <button data-panel="contenus" onclick="allerVers('contenus')"><span>▤</span>Contenus</button>
+    <button data-panel="users" onclick="allerVers('users')"><span>◯</span>Utilisateurs</button>
+    <button data-panel="transactions" onclick="allerVers('transactions')"><span>$</span>Transactions</button>
+    <button onclick="ouvrirMenu()"><span>≡</span>Plus</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script>
+let D = { programmes:[], matieres:[], modules:[], users:[], quiz:[], lectures:[], achats:[], favoris:[] };
+let FILTRE_CONTENU="tout", FILTRE_CONTENU_PROG="", FILTRE_USER="tout", FILTRE_TRANS="tout", FILTRE_VUES="tout";
+let PANEL_ACTUEL = "vue";
+const go = p => window.location.href = p;
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+function fmtDate(d){ if(!d) return "-"; try{ const dt=new Date(d); return dt.toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"})+" à "+dt.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }catch(e){ return d; } }
+function fmtDateCourt(d){ if(!d) return "-"; try{ return new Date(d).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"}); }catch(e){ return d; } }
+function esc(s){ return String(s??"").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function fmtFCFA(n){ return Number(n||0).toLocaleString("fr-FR") + " FCFA"; }
+function filtrerTable(id,q){ q=(q||"").toLowerCase(); document.querySelectorAll("#"+id+" tbody tr").forEach(tr=>{ tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none"; }); }
+function retourSite(){ go("accueil.html"); }
+
+// ===== BLOC STATS MASQUABLE / REMETTABLE =====
+function toggleStats(){
+  const bloc = document.getElementById("blocStats");
+  const btn = document.getElementById("btnToggleStats");
+  const cachee = bloc.classList.toggle("cachee");
+  btn.textContent = cachee ? "Afficher les stats" : "Masquer les stats";
+  localStorage.setItem("admin_stats_cachee", cachee ? "1" : "0");
+}
+if(localStorage.getItem("admin_stats_cachee")==="1"){
+  document.getElementById("blocStats")?.classList.add("cachee");
+  const b = document.getElementById("btnToggleStats"); if(b) b.textContent = "Afficher les stats";
+}
+
+// ===== LECTURES ACTIVES = PENDANT ABONNEMENT PROF (15 000) =====
+// Une lecture est active / payante si : date_lecture <= abonnement_prof_expire_le de l'auteur
+// Sinon : hors période, non payée. On ne devine pas statut_prof, on l'affiche tel qu'en base.
+function estLectureActive(lecture, auteur){
+  if(!auteur) return { active:false, raison:"Auteur introuvable" };
+  const expire = auteur.abonnement_prof_expire_le;
+  if(!expire) return { active:false, raison:"Pas d'abonnement prof" };
+  const dLect = new Date(lecture.created_at).getTime();
+  const dExpire = new Date(expire).getTime();
+  if(dLect <= dExpire) return { active:true, raison:"Avant expiration" };
+  return { active:false, raison:"Après expiration" };
+}
+function vuesPourModule(moduleId){
+  const auteur = D.users.find(u=>u.id===D.modules.find(m=>m.id===moduleId)?.enseignant_id);
+  const lectures = D.lectures.filter(l=>l.module_id===moduleId);
+  let actives = 0, hors = 0;
+  lectures.forEach(l=>{ if(estLectureActive(l, auteur).active) actives++; else hors++; });
+  return { total: lectures.length, actives, hors, auteur };
+}
+
+function ouvrirMenu(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+function fermerMenu(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+const TITRES = { vue:["Vue d'ensemble","Tout voir, tout gérer, en temps réel."], programmes:["Programmes","Créer, modifier, supprimer un programme."], matieres:["Matières","Affilier une matière à un programme."], contenus:["Cours / Fiches / Fascicules","Tous les contenus avec toutes les infos."], quiz:["Quiz et Examens","Créer et gérer les quiz."], users:["Utilisateurs","Tous les utilisateurs avec toutes les infos."], transactions:["Transactions","Tous les paiements, avec statut et opérateur."], lectures:["Lectures","Qui a lu quoi, et quand."], dates:["Dates et activité","Inscriptions et lectures par jour."], base:["Base de données","Contenu brut de chaque table."] };
+
+function allerVers(nom){
+  if(!TITRES[nom]) nom = "vue";
+  if(location.hash !== "#"+nom) location.hash = "#"+nom;
+  else afficherPanel(nom);
+  fermerMenu();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function afficherPanel(nom){
+  PANEL_ACTUEL = nom;
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("panel-"+nom)?.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.panel===nom));
+  document.querySelectorAll(".bottom-nav button[data-panel]").forEach(b=>b.classList.toggle("active", b.dataset.panel===nom));
+  document.getElementById("titrePanel").textContent = TITRES[nom][0];
+  document.getElementById("sousTitrePanel").textContent = TITRES[nom][1];
+  document.getElementById("breadcrumb").innerHTML = `Admin / <b>${TITRES[nom][0]}</b>`;
+  if(nom==="programmes") chargerProgrammes();
+  if(nom==="matieres") chargerMatieres();
+  if(nom==="contenus") chargerContenus();
+  if(nom==="quiz") chargerQuiz();
+  if(nom==="users") chargerUsers();
+  if(nom==="transactions") chargerTransactions();
+  if(nom==="lectures") chargerLectures();
+  if(nom==="dates") chargerDates();
+}
+window.addEventListener("hashchange", ()=>{
+  const nom = (location.hash||"#vue").replace("#","");
+  afficherPanel(TITRES[nom] ? nom : "vue");
+});
+function showSubQuiz(nom, btn){
+  ["liste","ajout","exam"].forEach(k=>{ document.getElementById("quiz-"+k).style.display = k===nom ? "block" : "none"; });
+  btn.parentElement.querySelectorAll(".subtab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+const ADMINS_AUTORISES = ["epainethkoutawa@gmail.com"];
+
+async function chargerTout(){
+  const { data:{ user } } = await supabaseClient.auth.getUser();
+  if(!user){ go("connexion.html"); return; }
+  const { data: profil } = await supabaseClient.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const estAdmin = ADMINS_AUTORISES.includes((user.email||"").toLowerCase()) || profil?.role === "superadmin" || profil?.role === "admin";
+  if(!estAdmin){
+    document.getElementById("verrouEmail").textContent = user.email;
+    document.getElementById("verrouAdmin").classList.add("show");
+    document.querySelector(".layout").style.display = "none";
+    document.querySelector(".bottom-nav").style.display = "none";
+    setTimeout(()=>{ go("accueil.html"); }, 3000);
+    return;
+  }
+  document.getElementById("nomAdmin").textContent = profil?.full_name || "Admin";
+  document.getElementById("emailAdmin").textContent = user.email;
+  document.getElementById("avatarAdmin").textContent = (profil?.full_name||"A")[0].toUpperCase();
+  const [progs, mats, mods, users, quiz, lectures, achats, favs] = await Promise.all([
+    supabaseClient.from("programmes").select("*").order("nom"),
+    supabaseClient.from("matieres").select("*").order("nom"),
+    supabaseClient.from("modules").select("*, profiles:enseignant_id(full_name)").order("created_at",{ascending:false}),
+    supabaseClient.from("profiles").select("*").order("created_at",{ascending:false}),
+    supabaseClient.from("quiz").select("*").order("created_at",{ascending:false}),
+    supabaseClient.from("lectures").select("*").order("created_at",{ascending:false}).limit(500),
+    supabaseClient.from("mes_cours").select("*, profiles:user_id(full_name,email), modules:module_id(titre,prix,type)").order("created_at",{ascending:false}).limit(500),
+    supabaseClient.from("favoris").select("*").limit(500),
+  ]);
+  D.programmes = progs.data||[]; D.matieres = mats.data||[]; D.modules = mods.data||[]; D.users = users.data||[]; D.quiz = quiz.data||[]; D.lectures = lectures.data||[]; D.achats = achats.data||[]; D.favoris = favs.data||[];
+  document.getElementById("stUsers").textContent = D.users.length;
+  document.getElementById("stUsersTxt").textContent = D.users.filter(u=>u.premium).length + " premium • " + D.users.filter(u=>!u.programme && u.role!=="enseignant").length + " sans programme";
+  document.getElementById("stModules").textContent = D.modules.length;
+  document.getElementById("stPremium").textContent = D.users.filter(u=>u.premium).length;
+  document.getElementById("stAttente").textContent = D.achats.filter(a=>a.statut==="en_attente").length;
+  document.getElementById("cVue").textContent = D.users.length + D.modules.length;
+  document.getElementById("cProgs").textContent = D.programmes.length;
+  document.getElementById("cMats").textContent = D.matieres.length;
+  document.getElementById("cMods").textContent = D.modules.length;
+  document.getElementById("cQuiz").textContent = D.quiz.length;
+  document.getElementById("cUsers").textContent = D.users.length;
+  document.getElementById("cTrans").textContent = D.achats.length;
+  document.getElementById("cLect").textContent = D.lectures.length;
+  document.getElementById("activiteRecente").innerHTML = D.lectures.slice(0,10).map(l=>{
+    const u = D.users.find(x=>x.id===l.user_id); const m = D.modules.find(x=>x.id===l.module_id);
+    return `<div class="kv" style="cursor:pointer" onclick="allerVers('contenus')"><b>${esc(u?.full_name||"Utilisateur")} a lu ${esc(m?.titre||"un contenu")}</b><span>${fmtDate(l.created_at)}</span></div>`;
+  }).join("") || "<p class='muted'>Aucune activité.</p>";
+  const enAttente = D.achats.filter(a=>a.statut==="en_attente").length;
+  const sansProg = D.users.filter(u=>!u.programme && u.role!=="enseignant").length;
+  const sansFichier = D.modules.filter(m=>!m.fichier_url && !m.pdf_url && !m.file_url && !m.lien && !m.url).length;
+  document.getElementById("alertesAdmin").innerHTML = `
+    <div class="kv" style="cursor:pointer" onclick="allerVers('transactions')"><b>Paiements en attente</b><span>${enAttente} — Voir -></span></div>
+    <div class="kv" style="cursor:pointer" onclick="allerVers('users')"><b>Utilisateurs sans programme</b><span>${sansProg} — Voir -></span></div>
+    <div class="kv" style="cursor:pointer" onclick="allerVers('contenus')"><b>Contenus sans fichier</b><span>${sansFichier} — Voir -></span></div>`;
+  chargerProgrammes(); chargerMatieres(); chargerContenus(); chargerQuiz(); chargerUsers(); chargerTransactions(); chargerLectures(); chargerDates();
+}
+
+function chargerProgrammes(){
+  document.getElementById("nbProgs").textContent = D.programmes.length + " programme(s)";
+  document.getElementById("listeProgrammes").innerHTML = `<div class="table-wrap"><table id="tableProgs"><thead><tr><th>Programme</th><th>Description</th><th>Matières</th><th>Contenus</th><th>Étudiants</th><th>Date de création</th><th>Actions</th></tr></thead><tbody>` + D.programmes.map(p=>{
+    const nbMat = D.matieres.filter(m=>m.programme===p.nom).length;
+    const nbCours = D.modules.filter(m=>m.programme===p.nom).length;
+    const nbEtud = D.users.filter(u=>u.programme===p.nom).length;
+    return `<tr><td><span class="bold">${esc(p.nom)}</span></td><td class="muted">${esc(p.description||"-")}</td><td>${nbMat}</td><td>${nbCours}</td><td>${nbEtud}</td><td class="muted">${fmtDate(p.created_at)}</td><td><div class="actions"><button class="btn-mini edit" onclick="modifierProgramme('${p.id}','${esc(p.nom)}')">Modifier</button><button class="btn-mini del" onclick="supprimerLigne('programmes','${p.id}','programme ${esc(p.nom)}')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>`;
+}
+async function ajouterProgramme(){
+  const nom = document.getElementById("newProgNom").value.trim();
+  const desc = document.getElementById("newProgDesc").value.trim();
+  if(!nom) return toast("Écris le nom du programme");
+  const { error } = await supabaseClient.from("programmes").insert({ nom, description: desc, actif: true });
+  if(error) return toast("Erreur : " + error.message);
+  toast("Programme créé"); document.getElementById("newProgNom").value=""; document.getElementById("newProgDesc").value="";
+  await chargerTout();
+}
+async function modifierProgramme(id, ancien){
+  const nouveau = prompt("Nouveau nom du programme :", ancien);
+  if(!nouveau || nouveau===ancien) return;
+  const { error } = await supabaseClient.from("programmes").update({ nom: nouveau.trim() }).eq("id", id);
+  if(error) return toast(error.message);
+  toast("Programme modifié"); await chargerTout();
+}
+
+function chargerMatieres(){
+  const sel = document.getElementById("matProgSelect");
+  const selFiltre = document.getElementById("filtreMatProg");
+  const selQuiz = document.getElementById("quizProg");
+  const opts = D.programmes.map(p=>`<option value="${esc(p.nom)}">${esc(p.nom)}</option>`).join("");
+  if(sel) sel.innerHTML = `<option value="">Choisir un programme...</option>` + opts;
+  if(selQuiz) selQuiz.innerHTML = `<option value="">Programme...</option>` + opts;
+  if(selFiltre){ const val = selFiltre.value; selFiltre.innerHTML = `<option value="">Tous les programmes</option>` + opts; selFiltre.value = val; }
+  const filtreProg = document.getElementById("filtreMatProg")?.value || "";
+  let list = [...D.matieres];
+  if(filtreProg) list = list.filter(m=>m.programme===filtreProg);
+  document.getElementById("listeMatieres").innerHTML = `<div class="table-wrap"><table id="tableMatieres"><thead><tr><th>Matière</th><th>Programme</th><th>Contenus</th><th>Date de création</th><th>Actions</th></tr></thead><tbody>` + list.map(m=>{
+    const nb = D.modules.filter(x=>x.matiere===m.nom && x.programme===m.programme).length;
+    return `<tr><td><span class="bold">${esc(m.nom)}</span></td><td><span class="badge badge-grey">${esc(m.programme||"-")}</span></td><td>${nb}</td><td class="muted">${fmtDate(m.created_at)}</td><td><div class="actions"><button class="btn-mini edit" onclick="modifierMatiere('${m.id}','${esc(m.nom)}')">Modifier</button><button class="btn-mini del" onclick="supprimerLigne('matieres','${m.id}','matière ${esc(m.nom)}')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>`;
+}
+async function ajouterMatiere(){
+  const prog = document.getElementById("matProgSelect").value;
+  const nom = document.getElementById("newMatNom").value.trim();
+  if(!prog) return toast("Choisis un programme");
+  if(!nom) return toast("Écris le nom de la matière");
+  const { error } = await supabaseClient.from("matieres").insert({ nom, programme: prog, actif: true });
+  if(error) return toast("Erreur : " + error.message);
+  toast("Matière affiliée à " + prog); document.getElementById("newMatNom").value="";
+  await chargerTout();
+}
+async function modifierMatiere(id, ancien){
+  const nouveau = prompt("Nouveau nom de la matière :", ancien);
+  if(!nouveau || nouveau===ancien) return;
+  const { error } = await supabaseClient.from("matieres").update({ nom: nouveau.trim() }).eq("id", id);
+  if(error) return toast(error.message);
+  toast("Matière modifiée"); await chargerTout();
+}
+
+function chargerContenus(){
+  let list = [...D.modules];
+  if(FILTRE_CONTENU!=="tout") list = list.filter(m=>m.type===FILTRE_CONTENU);
+  if(FILTRE_CONTENU_PROG) list = list.filter(m=>m.programme===FILTRE_CONTENU_PROG);
+  if(FILTRE_VUES==="actives") list = list.filter(m=>vuesPourModule(m.id).actives>0);
+  if(FILTRE_VUES==="hors") list = list.filter(m=>vuesPourModule(m.id).hors>0);
+  const selProg = document.getElementById("filtreContenuProg");
+  if(selProg){ const v = selProg.value; selProg.innerHTML = `<option value="">Tous les programmes</option>` + D.programmes.map(p=>`<option value="${esc(p.nom)}">${esc(p.nom)}</option>`).join(""); selProg.value = v; }
+
+  let total=0, activesTot=0, horsTot=0;
+  D.modules.forEach(m=>{ const v=vuesPourModule(m.id); total+=v.total; activesTot+=v.actives; horsTot+=v.hors; });
+  document.getElementById("vuesTotal").textContent = total;
+  document.getElementById("vuesActives").textContent = activesTot;
+  document.getElementById("vuesHorsPeriode").textContent = horsTot;
+
+  document.getElementById("listeContenus").innerHTML = list.length ? `<div class="table-wrap"><table id="tableContenus"><thead><tr><th>Titre</th><th>Type</th><th>Matière</th><th>Programme</th><th>Prix / Premium</th><th>Prof</th><th>Abonnement prof</th><th>Statut prof</th><th>Vues totales</th><th>Lectures actives / Payantes</th><th>Hors période</th><th>Date</th><th>Actions</th></tr></thead><tbody>` + list.map(m=>{
+    const v = vuesPourModule(m.id);
+    const auteur = v.auteur;
+    const badgeType = m.type==="fascicule" ? `<span class="badge badge-violet">Fascicule</span>` : m.type==="fiche" ? `<span class="badge badge-green">Fiche</span>` : `<span class="badge badge-grey">Cours</span>`;
+    const prixTxt = m.type==="fascicule" ? (m.prix||0)+" FCFA" : (m.is_premium ? `<span class="badge badge-red">Premium</span>` : `<span class="badge badge-green">Gratuit</span>`);
+    const expireTxt = auteur?.abonnement_prof_expire_le ? fmtDateCourt(auteur.abonnement_prof_expire_le) : "Pas d'abonnement";
+    const statutTxt = auteur?.statut_prof ?? auteur?.statut ?? "-";
+    return `<tr><td><span class="bold">${esc(m.titre)}</span><div class="muted">${esc(m.description||"")}</div></td><td>${badgeType}</td><td>${esc(m.matiere||"-")}</td><td>${esc(m.programme||"-")}</td><td>${prixTxt}</td><td>${esc(m.profiles?.full_name||auteur?.full_name||"-")}</td><td class="muted">${expireTxt}</td><td><span class="badge badge-grey">${esc(statutTxt)}</span></td><td><b>${v.total}</b></td><td><span class="badge badge-green">${v.actives} payantes</span></td><td><span class="badge badge-yellow">${v.hors} hors période</span></td><td class="muted">${fmtDate(m.created_at)}</td><td><div class="actions"><button class="btn-mini edit" onclick="modifierContenu('${m.id}')">Modifier</button><button class="btn-mini del" onclick="supprimerLigne('modules','${m.id}','contenu ${esc(m.titre)}')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>` : `<div class="empty"><b>Aucun contenu</b>Aucun contenu pour ce filtre.</div>`;
+}
+async function modifierContenu(id){
+  const m = D.modules.find(x=>x.id===id); if(!m) return;
+  const titre = prompt("Titre :", m.titre); if(titre===null) return;
+  const matiere = prompt("Matière :", m.matiere||""); if(matiere===null) return;
+  const programme = prompt("Programme :", m.programme||""); if(programme===null) return;
+  const prix = m.type==="fascicule" ? prompt("Prix FCFA :", m.prix||0) : null;
+  const premium = m.type!=="fascicule" ? confirm("Premium ? OK = Premium, Annuler = Gratuit") : false;
+  const { error } = await supabaseClient.from("modules").update({ titre: titre.trim(), matiere: matiere.trim(), programme: programme.trim(), ...(prix!==null?{prix:Number(prix)||0}:{}), ...(m.type!=="fascicule"?{is_premium:premium}:{}) }).eq("id", id);
+  if(error) return toast(error.message);
+  toast("Contenu modifié"); await chargerTout();
+}
+
+function chargerUsers(){
+  let list = [...D.users];
+  if(FILTRE_USER==="etudiant") list = list.filter(u=>u.role!=="enseignant" && u.role!=="prof" && u.role!=="superadmin");
+  if(FILTRE_USER==="prof") list = list.filter(u=>u.role==="enseignant"||u.role==="prof");
+  if(FILTRE_USER==="premium") list = list.filter(u=>u.premium);
+  if(FILTRE_USER==="sansprog") list = list.filter(u=>!u.programme);
+  document.getElementById("usersCount").textContent = list.length + " utilisateur(s) affiché(s) sur " + D.users.length;
+  document.getElementById("listeUsers").innerHTML = list.length ? `<div class="table-wrap"><table id="tableUsers"><thead><tr><th>Nom complet</th><th>Email</th><th>Rôle</th><th>Programme</th><th>Premium</th><th>Lectures</th><th>Favoris</th><th>Abonnement prof expire le</th><th>Statut prof</th><th>Date d'inscription</th><th>Actions</th></tr></thead><tbody>` + list.map(u=>{
+    const nbLect = D.lectures.filter(l=>l.user_id===u.id).length;
+    const nbFav = D.favoris.filter(f=>f.user_id===u.id).length;
+    return `<tr><td><span class="bold">${esc(u.full_name||"-")}</span></td><td class="muted">${esc(u.email||"-")}</td><td><span class="badge ${u.role==="enseignant"||u.role==="prof"?"badge-violet":"badge-grey"}">${esc(u.role||"etudiant")}</span></td><td>${esc(u.programme||"-")}</td><td>${u.premium?`<span class="badge badge-green">Premium</span>`:`<span class="badge badge-grey">Gratuit</span>`}</td><td>${nbLect}</td><td>${nbFav}</td><td class="muted">${u.abonnement_prof_expire_le ? fmtDateCourt(u.abonnement_prof_expire_le) : "-"}</td><td><span class="badge badge-grey">${esc(u.statut_prof ?? u.statut ?? "-")}</span></td><td class="muted">${fmtDate(u.created_at)}</td><td><div class="actions"><button class="btn-mini edit" onclick="modifierUser('${u.id}')">Modifier</button><button class="btn-mini ${u.premium?"edit":"green"}" onclick="togglePremium('${u.id}',${!!u.premium})">${u.premium?"Retirer Premium":"Mettre Premium"}</button><button class="btn-mini del" onclick="supprimerLigne('profiles','${u.id}','utilisateur ${esc(u.full_name||u.email)}')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>` : `<div class="empty"><b>Aucun utilisateur</b>Aucun utilisateur pour ce filtre.</div>`;
+}
+async function modifierUser(id){
+  const u = D.users.find(x=>x.id===id); if(!u) return;
+  const nom = prompt("Nom :", u.full_name||""); if(nom===null) return;
+  const prog = prompt("Programme :", u.programme||""); if(prog===null) return;
+  const role = prompt("Rôle (etudiant / enseignant / superadmin) :", u.role||"etudiant"); if(role===null) return;
+  const { error } = await supabaseClient.from("profiles").update({ full_name: nom.trim(), programme: prog.trim(), role: role.trim() }).eq("id", id);
+  if(error) return toast(error.message);
+  toast("Utilisateur modifié"); await chargerTout();
+}
+async function togglePremium(id, actuel){
+  const { error } = await supabaseClient.from("profiles").update({ premium: !actuel }).eq("id", id);
+  if(error) return toast(error.message);
+  toast(actuel ? "Premium retiré" : "Premium activé"); await chargerTout();
+}
+
+function chargerQuiz(){
+  document.getElementById("listeQuiz").innerHTML = D.quiz.length ? `<div class="table-wrap"><table id="tableQuiz"><thead><tr><th>Titre</th><th>Question</th><th>Matière</th><th>Programme</th><th>Date</th><th>Actions</th></tr></thead><tbody>` + D.quiz.map(q=>{
+    return `<tr><td><span class="bold">${esc(q.titre||"-")}</span></td><td>${esc(q.question||"-")}</td><td>${esc(q.matiere||"-")}</td><td>${esc(q.programme||"-")}</td><td class="muted">${fmtDate(q.created_at)}</td><td><div class="actions"><button class="btn-mini del" onclick="supprimerLigne('quiz','${q.id}','quiz ${esc(q.titre||"")}')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>` : `<div class="empty"><b>Aucun quiz</b>Aucun quiz créé pour l'instant.</div>`;
+}
+async function ajouterQuiz(){
+  const titre = document.getElementById("quizTitre").value.trim();
+  const question = document.getElementById("quizQuestion").value.trim();
+  const r1 = document.getElementById("quizRep1").value.trim();
+  const r2 = document.getElementById("quizRep2").value.trim();
+  const r3 = document.getElementById("quizRep3").value.trim();
+  const r4 = document.getElementById("quizRep4").value.trim();
+  const bonne = document.getElementById("quizBonne").value.trim();
+  const prog = document.getElementById("quizProg").value;
+  const mat = document.getElementById("quizMatiere").value.trim();
+  if(!titre || !question) return toast("Titre + question obligatoires");
+  const { error } = await supabaseClient.from("quiz").insert({ titre, question, reponse1:r1, reponse2:r2, reponse3:r3, reponse4:r4, bonne_reponse: bonne, programme: prog, matiere: mat });
+  if(error) return toast("Erreur : " + error.message);
+  toast("Quiz créé"); await chargerTout();
+}
+
+function chargerTransactions(){
+  const prixDe = a => Number(a.modules?.prix || a.prix || a.montant || 0);
+  const totalTout = D.achats.reduce((s,a)=> s + prixDe(a), 0);
+  const payes = D.achats.filter(a=>a.statut==="paye");
+  const attentes = D.achats.filter(a=>a.statut==="en_attente");
+  const totalPaye = payes.reduce((s,a)=> s + prixDe(a), 0);
+  const totalAttente = attentes.reduce((s,a)=> s + prixDe(a), 0);
+  document.getElementById("totalTransTout").textContent = fmtFCFA(totalTout);
+  document.getElementById("nbTransTout").textContent = D.achats.length + " transaction(s) au total";
+  document.getElementById("totalTransPaye").textContent = fmtFCFA(totalPaye);
+  document.getElementById("nbTransPaye").textContent = payes.length + " transaction(s) payée(s)";
+  document.getElementById("totalTransAttente").textContent = fmtFCFA(totalAttente);
+  document.getElementById("nbTransAttente").textContent = attentes.length + " transaction(s) en attente";
+  let list = [...D.achats];
+  if(FILTRE_TRANS==="attente") list = list.filter(a=>a.statut==="en_attente");
+  if(FILTRE_TRANS==="paye") list = list.filter(a=>a.statut==="paye");
+  document.getElementById("listeTransactions").innerHTML = list.length ? `<div class="table-wrap"><table id="tableTrans"><thead><tr><th>Utilisateur</th><th>Email</th><th>Fascicule</th><th>Prix</th><th>Numéro</th><th>Opérateur</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead><tbody>` + list.map(a=>{
+    const badge = a.statut==="en_attente" ? `<span class="badge badge-yellow">En attente</span>` : a.statut==="paye" ? `<span class="badge badge-green">Payé</span>` : `<span class="badge badge-grey">${esc(a.statut||"-")}</span>`;
+    return `<tr><td><span class="bold">${esc(a.profiles?.full_name||"-")}</span></td><td class="muted">${esc(a.profiles?.email||"-")}</td><td>${esc(a.modules?.titre||"-")}</td><td>${fmtFCFA(prixDe(a))}</td><td>${esc(a.numero_paiement||"-")}</td><td>${esc(a.operateur||"-")}</td><td>${badge}</td><td class="muted">${fmtDate(a.created_at)}</td><td><div class="actions">${a.statut!=="paye"?`<button class="btn-mini green" onclick="validerTransaction('${a.id}')">Valider</button>`:""}<button class="btn-mini del" onclick="supprimerLigne('mes_cours','${a.id}','transaction')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div><div class="pagination"><span>Total affiché : ${fmtFCFA(list.reduce((s,a)=>s+prixDe(a),0))} — ${list.length} transaction(s)</span><span>Total général : ${fmtFCFA(totalTout)}</span></div>` : `<div class="empty"><b>Aucune transaction</b>Aucune transaction pour ce filtre.</div>`;
+}
+async function validerTransaction(id){
+  const { error } = await supabaseClient.from("mes_cours").update({ statut: "paye" }).eq("id", id);
+  if(error) return toast(error.message);
+  toast("Transaction validée"); await chargerTout();
+}
+
+function chargerLectures(){
+  document.getElementById("listeLectures").innerHTML = D.lectures.length ? `<div class="table-wrap"><table id="tableLect"><thead><tr><th>Utilisateur</th><th>Contenu lu</th><th>Auteur</th><th>Abonnement auteur expire le</th><th>Date lecture</th><th>Statut lecture</th><th>Actions</th></tr></thead><tbody>` + D.lectures.slice(0,100).map(l=>{
+    const u = D.users.find(x=>x.id===l.user_id); const m = D.modules.find(x=>x.id===l.module_id);
+    const auteur = D.users.find(x=>x.id===m?.enseignant_id);
+    const res = estLectureActive(l, auteur);
+    return `<tr><td><span class="bold">${esc(u?.full_name||"-")}</span><div class="muted">${esc(u?.email||"")}</div></td><td>${esc(m?.titre||"-")}</td><td>${esc(auteur?.full_name||"-")}</td><td class="muted">${auteur?.abonnement_prof_expire_le ? fmtDateCourt(auteur.abonnement_prof_expire_le) : "-"}</td><td class="muted">${fmtDate(l.created_at)}</td><td>${res.active ? `<span class="badge badge-green">Active / Payante</span>` : `<span class="badge badge-yellow">Hors période</span><div class="muted">${esc(res.raison)}</div>`}</td><td><div class="actions"><button class="btn-mini del" onclick="supprimerLigne('lectures','${l.id}','lecture')">Supprimer</button></div></td></tr>`;
+  }).join("") + `</tbody></table></div>` : `<div class="empty"><b>Aucune lecture</b>Personne n'a encore lu de contenu.</div>`;
+}
+
+function chargerDates(){
+  const parJour = {}; D.users.forEach(u=>{ const j=(u.created_at||"").slice(0,10); if(j) parJour[j]=(parJour[j]||0)+1; });
+  const jours = Object.entries(parJour).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10);
+  document.getElementById("datesContenu").innerHTML = jours.map(([j,n])=>`<div class="kv"><b>${j}</b><span>${n} inscription(s)</span></div>`).join("") || "<p class='muted'>Aucune donnée.</p>";
+  document.getElementById("derniersInscrits").innerHTML = D.users.slice(0,10).map(u=>`<div class="kv" style="cursor:pointer" onclick="allerVers('users')"><b>${esc(u.full_name||u.email)}</b><span>${fmtDate(u.created_at)} — ${esc(u.programme||"-")}</span></div>`).join("");
+  const parJourLect = {}; D.lectures.forEach(l=>{ const j=(l.created_at||"").slice(0,10); if(j) parJourLect[j]=(parJourLect[j]||0)+1; });
+  const joursLect = Object.entries(parJourLect).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10);
+  document.getElementById("datesLectures").innerHTML = joursLect.map(([j,n])=>`<div class="kv"><b>${j}</b><span>${n} lecture(s)</span></div>`).join("") || "<p class='muted'>Aucune donnée.</p>";
+}
+
+async function voirTable(nom){
+  const { data, error } = await supabaseClient.from(nom).select("*").order("created_at",{ascending:false}).limit(50);
+  if(error) return document.getElementById("contenuTable").innerHTML = `<p style="color:#ff3b30">Erreur : ${error.message}</p>`;
+  if(!data?.length) return document.getElementById("contenuTable").innerHTML = `<p class="muted">Table <b>${nom}</b> vide.</p>`;
+  const cols = Object.keys(data[0]);
+  document.getElementById("contenuTable").innerHTML = `<p><b>${nom}</b> — ${data.length} lignes (50 max)</p><div class="table-wrap" style="margin-top:12px"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${data.map(r=>`<tr>${cols.map(c=>`<td>${esc(typeof r[c]==="object"?JSON.stringify(r[c]):r[c])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
+async function supprimerLigne(table, id, label){
+  if(!confirm("Supprimer définitivement : " + label + " ?\nCette action est irréversible.")) return;
+  if(!confirm("Tu es sûr ? Vraiment sûr ?")) return;
+  const { error } = await supabaseClient.from(table).delete().eq("id", id);
+  if(error) return toast("Erreur : " + error.message);
+  toast("Supprimé"); await chargerTout();
+}
+
+chargerTout().then(()=>{
+  const nom = (location.hash||"#vue").replace("#","");
+  afficherPanel(TITRES[nom] ? nom : "vue");
+});
+</script>
+</body>
+</html>

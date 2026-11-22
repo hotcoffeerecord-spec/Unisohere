@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Profil - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+
+<div class="header header-centre"><h1>Profil</h1></div>
+
+<!-- CARTE PROFIL -->
+<div class="profile-card">
+  <div class="profile-top">
+    <div class="avatar" id="avatarLettre">?</div>
+    <div class="profile-info">
+      <h2 id="userName">...</h2>
+      <p id="membreDepuis">Membre depuis ...</p>
+      <span id="badgeStatut" class="badge-gratuit">COMPTE GRATUIT</span>
+    </div>
+  </div>
+  <!-- MODIFIER LE NOM - STYLE ARRANGE -->
+  <button class="btn-modifier" id="btnModifierNom" onclick="ouvrirModifierNom()">✏️ Modifier mon nom</button>
+  <div class="edit-nom" id="editNomBox" style="display:none">
+    <label class="label-edit">Ton nouveau nom</label>
+    <input type="text" id="inputNouveauNom" placeholder="Ex : Jean Kanza" maxlength="50">
+    <div class="edit-actions">
+      <button class="btn-save" onclick="enregistrerNom()">Enregistrer</button>
+      <button class="btn-cancel" onclick="fermerModifierNom()">Annuler</button>
+    </div>
+    <p id="msgNom" class="msg-nom"></p>
+  </div>
+</div>
+
+<!-- PREMIUM REMONTE EN HAUT, JUSTE SOUS LA CARTE PROFIL -->
+<div class="premium-box" id="premiumBox" onclick="allerAbonnement()">
+  <div><b id="premiumBoxTitre">Passe en Premium</b><p id="premiumBoxSousTitre">Debloque tous les cours</p></div>
+  <button id="premiumBoxBtn">S'abonner</button>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+  <div class="menu-item" onclick="window.location.href='espacetravaille.html'">
+    <div class="menu-icon">C</div><span>Mes cours</span><span class="arrow">›</span>
+  </div>
+  <!-- NOUVEAU : CLASSEMENT -->
+  <div class="menu-item" onclick="window.location.href='classement.html'">
+    <div class="menu-icon" style="background:#FFD700">🏆</div><span>Voir les classements</span><span class="arrow">›</span>
+  </div>
+  <div class="menu-item" onclick="window.location.href='notifications.html'">
+    <div class="menu-icon">N</div><span>Notifications</span><span class="arrow">›</span>
+  </div>
+  <!-- DÉCONNEXION : avec confirmation maintenant -->
+  <div class="menu-item danger" onclick="ouvrirDeconnexion()">
+    <div class="menu-icon red">X</div><span>Déconnexion</span><span class="arrow">›</span>
+  </div>
+  <!-- SUPPRIMER COMPTE : avec confirmation -->
+  <div class="menu-item danger" onclick="ouvrirSupprimerCompte()">
+    <div class="menu-icon red">🗑</div><span>Supprimer mon compte</span><span class="arrow">›</span>
+  </div>
+</div>
+
+<!-- POPUP DECONNEXION - NOUVEAU -->
+<div class="popup-overlay" id="popupDeconnexion" style="display:none">
+  <div class="popup">
+    <h3>Se déconnecter ?</h3>
+    <p>Tu vas quitter ton compte. Tu devras te reconnecter pour revenir sur Unisphere.</p>
+    <div class="edit-actions">
+      <button class="btn-danger" onclick="confirmerDeconnexion()">Oui, me déconnecter</button>
+      <button class="btn-cancel" onclick="fermerDeconnexion()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP SUPPRIMER COMPTE -->
+<div class="popup-overlay" id="popupSupprimer" style="display:none">
+  <div class="popup">
+    <h3>Supprimer ton compte ?</h3>
+    <p>Cette action est <b>définitive</b>. Ton profil, tes cours, tes favoris et ton abonnement seront supprimés. Tu ne pourras pas récupérer ton compte.</p>
+    <p>Écris <b>SUPPRIMER</b> pour confirmer :</p>
+    <input type="text" id="inputConfirmSupprimer" placeholder="Écris SUPPRIMER">
+    <p id="msgSupprimer" class="msg-nom"></p>
+    <div class="edit-actions">
+      <button class="btn-danger" onclick="supprimerCompte()">Oui, supprimer mon compte</button>
+      <button class="btn-cancel" onclick="fermerSupprimerCompte()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV BAS -->
+<div class="bottom-nav">
+  <a href="acceuil.html"><span class="nav-dot"></span>Accueil</a>
+  <a href="espacetravaille.html"><span class="nav-dot"></span>Espace de travail</a>
+  <a href="notreassistant.html"><span class="nav-dot"></span>Assistant</a>
+  <a href="profile.html" class="active"><span class="nav-dot"></span>Profil</a>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script src="9-profile.js"></script>
+</body>
+</html>

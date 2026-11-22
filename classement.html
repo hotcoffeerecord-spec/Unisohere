@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Classement - Unisphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+<div class="header"><button class="btn-retour" onclick="go('acceuil.html')">←</button><h1 class="titre-page" style="flex:1;text-align:center">Classement</h1><span style="width:38px"></span></div>
+
+<!-- PHOTO EN HAUT -->
+<div class="hero-slider" style="height:200px">
+  <div class="hero-track" style="width:100%">
+    <div class="hero-slide" style="width:100%">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="Classement" loading="lazy">
+      <div class="hero-text"><h1>VOIR LE<br>CLASSEMENT.</h1><p>Découvre qui révise le mieux. Grimpe dans le classement et dépasse tes amis.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-title"><h1>Le <span>classement</span></h1><p>Les meilleurs scores aux examens blancs, pour ton programme.</p></div>
+
+<!-- POUR L'INSTANT : AUCUN CLASSEMENT -->
+<div class="courses" id="listeClassement">
+  <div class="empty">🏆<br><b>Aucun classement disponible</b><br>Personne n'a encore passé d'examen blanc pour ton programme.<br>Sois le premier à jouer !</div>
+</div>
+
+<!-- LIEN VERS LA 1ERE PAGE -->
+<div style="padding:20px 16px 0">
+  <div class="card" onclick="go('examenblanc.html')" style="cursor:pointer">
+    <div class="card-info">
+      <h3>📝 Passer un examen blanc</h3>
+      <p>Entraîne-toi en conditions réelles et gagne ta place dans le classement.</p>
+    </div>
+    <div class="card-actions">
+      <button class="btn-small btn-voir" onclick="event.stopPropagation();go('examenblanc.html')">Commencer →</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+</div>
+
+<div class="bottom-nav"><a class="active" onclick="go('acceuil.html')"><div class="nav-dot"></div>Accueil</a><a onclick="go('espacetravaille.html')"><div class="nav-dot"></div>Espace de travail</a><a onclick="go('notreassistant.html')"><div class="nav-dot"></div>Assistant</a><a onclick="go('profile.html')"><div class="nav-dot"></div>Profil</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="1-config.js"></script>
+<script src="2-cerveau.js"></script>
+<script src="6-protection.js"></script>
+<script>ProtegerPage('etudiant');</script>
+</body>
+</html>
